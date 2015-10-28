@@ -46,7 +46,7 @@ def _log_write(force=False):
 
     if force or (current - LAST_WRITE) > WRITE_PERIOD:
         with open(filename, "w+b") as f:
-            f.write("proto dst_port src_ip dst_ip sec\n")
+            f.write("proto dst_port src_ip dst_ip timestamp\n")
             for key in _traffic:
                 proto, dst_ip, dst_port = key.split(":")
                 for src_ip in sorted(_traffic[key]):
