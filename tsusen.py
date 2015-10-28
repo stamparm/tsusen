@@ -1,4 +1,5 @@
 import datetime
+import os
 import re
 import socket
 import struct
@@ -30,13 +31,14 @@ IPPROTO_LUT = dict(((getattr(socket, _), _.replace("IPPROTO_", "")) for _ in dir
 LOCAL_ADDRESSES = []
 BLACKLISTED_ADDRESSES = ("255.255.255.255", "127.0.0.1", "0.0.0.0")
 DATE_FORMAT = "%Y-%m-%d"
+RESULTS_DIRECTORY = os.path.normpath(os.path.join(os.path.dirname(__file__), "./results"))
 
 def _log_write(force=False):
     global LAST_FILENAME
     global LAST_WRITE
 
     current = time.time()
-    filename = "%s.csv" % datetime.date.today().strftime(DATE_FORMAT)
+    filename = os.path.join(RESULTS_DIRECTORY, "%s.csv" % datetime.date.today().strftime(DATE_FORMAT))
 
     if LAST_WRITE is None:
         LAST_WRITE = current
@@ -45,13 +47,21 @@ def _log_write(force=False):
         LAST_FILENAME = filename
 
     if force or (current - LAST_WRITE) > WRITE_PERIOD:
+        if not os.path.isdir(RESULTS_DIRECTORY):
+            os.makedirs(RESULTS_DIRECTORY)
+
         with open(filename, "w+b") as f:
+            results = []
             f.write("proto dst_port src_ip dst_ip timestamp\n")
+
             for key in _traffic:
                 proto, dst_ip, dst_port = key.split(":")
                 for src_ip in sorted(_traffic[key]):
                     sec = _auxiliary["%s:%s" % (key, src_ip)]
-                    f.write("%s %s %s %s %s\n" % (proto, dst_port, src_ip, dst_ip, sec))
+                    results.append((sec, (proto, dst_port, src_ip, dst_ip)))
+
+            for sec, entry in sorted(results):
+                f.write("%s %s\n" % (" ".join(str(_) for _ in entry), sec))
 
         LAST_WRITE = current
 
