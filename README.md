@@ -2,4 +2,4 @@
 
 ![Logo](http://i.imgur.com/hH1cr49.png)
 
-**tsusen** is a standalone sensor made for gathering information about the regular network traffic on a daily basis. Any disturbance should be closely watched for as it can become a prediction base of forthcoming events (e.g. usage of 1-day exploit for attacking web services).
+**tsusen** is a standalone sensor made for gathering information about the regular network traffic on a daily basis. Any disturbance should be closely watched for as it can become a prediction base of forthcoming events (e.g. exploitation of newly found web service vulnerabilities).
