@@ -128,7 +128,7 @@ def _process_packet(packet, sec, usec):
     except KeyboardInterrupt:
         raise
 
-    except Exception, ex:
+    except Exception:
         pass
 
     finally:
