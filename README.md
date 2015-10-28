@@ -43,7 +43,6 @@ TCP 80 115.239.248.245 192.165.57.46 1446042251
 TCP 80 184.105.247.207 192.165.57.46 1446041108
 TCP 80 85.114.40.90 192.165.57.46 1446042452
 ...
-...
 ```
 
-where `proto` represents the protocol that has been used by initiator coming from `src_ip` (in first entry `115.231.222.40`) toward our `<dst_ip:dst_port>` (in first entry `192.165.57.46:8080`) service, while the `timestamp` represents the time of (that day's first) connection attempt represented in Unix [timestamp](http://www.onlineconversion.com/unix_time.htm) format (in first entry `1446042553` stands for `Wed, 28 Oct 2015 14:29:13 GMT`).
+where `proto` (e.g. in first entry this is `TCP`) represents the protocol that has been used by initiator coming from `src_ip` (e.g. in first entry this is `115.231.222.40`) toward our `<dst_ip:dst_port>` (e.g. in first entry this is `192.165.57.46:8080`) service, while the `timestamp` represents the time of (that day's first) connection attempt represented in Unix [timestamp](http://www.onlineconversion.com/unix_time.htm) format (e.g. in first entry this is `1446042553`, which stands for `Wed, 28 Oct 2015 14:29:13 GMT`).
