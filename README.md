@@ -2,7 +2,7 @@
 
 ![Logo](http://i.imgur.com/hH1cr49.png)
 
-**tsusen** is a standalone sensor made for gathering information from the regular network traffic coming from the outside on a daily basis (e.g. mass-scans, service-scanners, etc.). Any disturbances should be closely watched for as those can become a good prediction base of forthcoming events. For example, exploitation of a newly found web service vulnerability (e.g. [Heartbleed](http://heartbleed.com/)) should generate a visible "spike" of connection attempts on affected network port.
+**tsusen** is a standalone sensor made for gathering information from the regular network traffic coming from the outside on a daily basis (e.g. mass-scans, service-scanners, etc.). Any disturbances should be closely watched for as those can become a good prediction base of forthcoming events. For example, exploitation of a newly found web service vulnerability (e.g. [Heartbleed](http://heartbleed.com/)) should generate a visible "spike" of total number of (potential) attackers on affected network port.
 
 Sensor's results are stored locally in CSV files on a daily basis (e.g. `2015-10-27.csv`) with periodic (flush) write of current day's data (e.g. every 15 minutes). File's structure is as follows:
 
