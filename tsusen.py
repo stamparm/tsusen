@@ -33,12 +33,12 @@ BLACKLISTED_ADDRESSES = ("255.255.255.255", "127.0.0.1", "0.0.0.0")
 DATE_FORMAT = "%Y-%m-%d"
 RESULTS_DIRECTORY = os.path.normpath(os.path.join(os.path.dirname(__file__), "./results"))
 
-def _log_write(force=False):
+def _log_write(force=False, filename=None):
     global LAST_FILENAME
     global LAST_WRITE
 
     current = time.time()
-    filename = os.path.join(RESULTS_DIRECTORY, "%s.csv" % datetime.date.today().strftime(DATE_FORMAT))
+    filename = filename or os.path.join(RESULTS_DIRECTORY, "%s.csv" % datetime.date.today().strftime(DATE_FORMAT))
 
     if LAST_WRITE is None:
         LAST_WRITE = current
@@ -66,7 +66,11 @@ def _log_write(force=False):
         LAST_WRITE = current
 
     if LAST_FILENAME != filename:
+        if not force and LAST_WRITE != current:
+            _log_write(True, LAST_FILENAME)
+
         LAST_FILENAME = filename
+
         _traffic.clear()
         _auxiliary.clear()
 
