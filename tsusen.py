@@ -32,6 +32,7 @@ LOCAL_ADDRESSES = []
 BLACKLISTED_ADDRESSES = ("255.255.255.255", "127.0.0.1", "0.0.0.0")
 DATE_FORMAT = "%Y-%m-%d"
 RESULTS_DIRECTORY = os.path.normpath(os.path.join(os.path.dirname(__file__), "./results"))
+CSV_HEADER = "proto dst_port dst_ip src_ip first_seen last_seen count"
 
 def _log_write(force=False, filename=None):
     global LAST_FILENAME
@@ -52,16 +53,17 @@ def _log_write(force=False, filename=None):
 
         with open(filename, "w+b") as f:
             results = []
-            f.write("proto dst_port src_ip dst_ip timestamp\n")
+            f.write("%s\n" % CSV_HEADER)
 
-            for key in _traffic:
-                proto, dst_ip, dst_port = key.split(":")
-                for src_ip in sorted(_traffic[key]):
-                    sec = _auxiliary["%s:%s" % (key, src_ip)]
-                    results.append((sec, (proto, dst_port, src_ip, dst_ip)))
+            for dst_key in _traffic:
+                proto, dst_ip, dst_port = dst_key.split(":")
+                for src_ip in _traffic[dst_key]:
+                    stat_key = "%s:%s" % (dst_key, src_ip)
+                    first_seen, last_seen, count = _auxiliary[stat_key]
+                    results.append((proto, int(dst_port), dst_ip, src_ip, first_seen, last_seen, count))
 
-            for sec, entry in sorted(results):
-                f.write("%s %s\n" % (" ".join(str(_) for _ in entry), sec))
+            for entry in sorted(results):
+                f.write("%s\n" % " ".join(str(_) for _ in entry))
 
         LAST_WRITE = current
 
@@ -87,31 +89,41 @@ def _process_packet(packet, sec, usec):
             ip_length = ip_header[2]
             packet = packet[:ETH_LENGTH + ip_length]  # truncate
             iph_length = (ip_header[0] & 0xF) << 2
+
             protocol = ip_header[6]
             src_ip = socket.inet_ntoa(ip_header[8])
             dst_ip = socket.inet_ntoa(ip_header[9])
 
             proto = IPPROTO_LUT.get(protocol)
 
-            if proto is None:
+            local_src = False
+            for prefix, mask in LOCAL_ADDRESSES:
+                if addr_to_int(src_ip) & mask == prefix:
+                    local_src = True
+                    break
+
+            if proto is None or local_src or any(_ in BLACKLISTED_ADDRESSES for _ in (src_ip, dst_ip)):
                 return
 
             # only process SYN packets
-            if protocol == socket.IPPROTO_TCP:  # TCP
+            if protocol == socket.IPPROTO_TCP:      # TCP
                 i = iph_length + ETH_LENGTH
-                src_port, dst_port, _, _, doff_reserved, flags = struct.unpack("!HHLLBB", packet[i:i + 14])
-                if flags == 2:  # SYN set (only)
-                    local_src = False
-                    for prefix, mask in LOCAL_ADDRESSES:
-                        if addr_to_int(src_ip) & mask == prefix:
-                            local_src = True
-                            break
-                    if not local_src and dst_ip not in BLACKLISTED_ADDRESSES:
-                        key = "%s:%s:%s" % (proto, dst_ip, dst_port)
-                        if key not in _traffic:
-                            _traffic[key] = set()
-                        _traffic[key].add(src_ip)
-                        _auxiliary["%s:%s" % (key, src_ip)] = sec
+                src_port, dst_port, _, _, _, flags = struct.unpack("!HHLLBB", packet[i:i + 14])
+
+                dst_key = "%s:%s:%s" % (proto, dst_ip, dst_port)
+                stat_key = "%s:%s" % (dst_key, src_ip)
+
+                if flags == 2:                      # SYN set (only)
+                    if dst_key not in _traffic:
+                        _traffic[dst_key] = set()
+
+                    _traffic[dst_key].add(src_ip)
+
+                    if stat_key not in _auxiliary:
+                        _auxiliary[stat_key] = [sec, sec, 1]
+                    else:
+                        _auxiliary[stat_key][1] = sec
+                        _auxiliary[stat_key][2] += 1
 
             else:
                 if protocol == socket.IPPROTO_UDP:  # UDP
@@ -124,20 +136,23 @@ def _process_packet(packet, sec, usec):
                 else:                               # non-TCP/UDP (e.g. ICMP)
                     src_port, dst_port = '-', '-'
 
+                dst_key = "%s:%s:%s" % (proto, dst_ip, dst_port)
+                stat_key = "%s:%s" % (dst_key, src_ip)
+
                 flow = tuple(sorted((addr_to_int(src_ip), src_port, addr_to_int(dst_ip), dst_port)))
+
                 if flow not in _auxiliary:
                     _auxiliary[flow] = True
-                    local_src = False
-                    for prefix, mask in LOCAL_ADDRESSES:
-                        if addr_to_int(src_ip) & mask == prefix:
-                            local_src = True
-                            break
-                    if not local_src and dst_ip not in BLACKLISTED_ADDRESSES:
-                        key = "%s:%s:%s" % (proto, dst_ip, dst_port)
-                        if key not in _traffic:
-                            _traffic[key] = set()
-                        _traffic[key].add(src_ip)
-                        _auxiliary["%s:%s" % (key, src_ip)] = sec
+
+                    if dst_key not in _traffic:
+                        _traffic[dst_key] = set()
+
+                    _traffic[dst_key].add(src_ip)
+                    _auxiliary[stat_key] = [sec, sec, 1]
+
+                elif stat_key in _auxiliary:
+                    _auxiliary[stat_key][1] = sec
+                    _auxiliary[stat_key][2] += 1
 
     except KeyboardInterrupt:
         raise
@@ -194,6 +209,11 @@ def main():
             exit("\n[x] no such device '%s'" % MONITOR_INTERFACE)
         else:
             raise
+    except Exception, ex:
+        if "Operation not permitted" in str(ex):
+            exit("[x] please run with sudo/Administrator privileges")
+        else:
+            raise
 
     if CAPTURE_FILTER:
         print "[i] setting filter '%s'" % CAPTURE_FILTER
@@ -205,8 +225,9 @@ def main():
 
     try:
         _cap.loop(-1, packet_handler)
-    except KeyboardInterrupt:
-        print "\r[x] Ctrl-C pressed"
+    except:
+        print "\r[x] stopped"
+    finally:
         _log_write(True)
 
 if __name__ == "__main__":
