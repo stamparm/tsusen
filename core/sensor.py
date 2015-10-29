@@ -14,7 +14,6 @@ import struct
 import subprocess
 import time
 
-from httpd import start_httpd
 from settings import *
 
 try:
@@ -102,11 +101,14 @@ def _process_packet(packet, sec, usec):
                     local_src = True
                     break
 
-            if proto is None or local_src or any(_ in BLACKLISTED_ADDRESSES for _ in (src_ip, dst_ip)):
+            if proto is None or any(_ in BLACKLISTED_ADDRESSES for _ in (src_ip, dst_ip)):
                 return
 
             # only process SYN packets
             if protocol == socket.IPPROTO_TCP:      # TCP
+                if local_src:
+                    return
+
                 i = iph_length + ETH_LENGTH
                 src_port, dst_port, _, _, _, flags = struct.unpack("!HHLLBB", packet[i:i + 14])
 
@@ -143,7 +145,10 @@ def _process_packet(packet, sec, usec):
 
                 if flow not in _auxiliary:
                     _auxiliary[flow] = True
-
+ 
+                    if local_src:
+                        return
+ 
                     if dst_key not in _traffic:
                         _traffic[dst_key] = set()
 
@@ -157,8 +162,8 @@ def _process_packet(packet, sec, usec):
     except KeyboardInterrupt:
         raise
 
-    except Exception:
-        pass
+    except Exception, ex:
+        print ex
 
     finally:
         _log_write()
@@ -180,7 +185,7 @@ def int_to_addr(value):
 def make_mask(bits):
     return 0xffffffff ^ (1 << 32 - bits) - 1
 
-def init():
+def init_sensor():
     global _cap
     global _datalink
 
@@ -232,11 +237,7 @@ def init():
     if _datalink not in (pcapy.DLT_EN10MB, pcapy.DLT_LINUX_SLL):
         exit("[x] datalink type '%s' not supported" % _datalink)
 
-    start_httpd()
-
-    print "[i] running HTTP server at '%s:%d'" % (HTTP_ADDRESS, HTTP_PORT)
-
-def start():
+def start_sensor():
     try:
         _cap.loop(-1, packet_handler)
     except:
