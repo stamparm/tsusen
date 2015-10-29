@@ -9,8 +9,8 @@ import sys
 
 sys.dont_write_bytecode = True
 
-from core.common import init
-from core.common import monitor
+from core.monitor import init
+from core.monitor import start
 
 def main():
     """
@@ -18,7 +18,7 @@ def main():
     """
 
     init()
-    monitor()
+    start()
 
 if __name__ == "__main__":
     main()

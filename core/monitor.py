@@ -236,7 +236,7 @@ def init():
 
     print "[i] running HTTP server at '%s:%d'" % (HTTP_ADDRESS, HTTP_PORT)
 
-def monitor():
+def start():
     try:
         _cap.loop(-1, packet_handler)
     except:
