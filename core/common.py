@@ -14,6 +14,7 @@ import struct
 import subprocess
 import time
 
+from httpd import start_httpd
 from settings import *
 
 try:
@@ -230,6 +231,10 @@ def init():
     _datalink = _cap.datalink()
     if _datalink not in (pcapy.DLT_EN10MB, pcapy.DLT_LINUX_SLL):
         exit("[x] datalink type '%s' not supported" % _datalink)
+
+    start_httpd()
+
+    print "[i] running HTTP server at '%s:%d'" % (HTTP_ADDRESS, HTTP_PORT)
 
 def monitor():
     try:

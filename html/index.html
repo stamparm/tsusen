@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>tsusen panel</title>
+
+        <link rel="shortcut icon" href="favicon.ico?v=2" />
+
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+        <script type="text/javascript">
+            google.load("visualization", "1", {packages:["corechart"]});
+            google.setOnLoadCallback(drawChart);
+
+            function drawChart() {
+                    var data = google.visualization.arrayToDataTable([
+                        ['Date', 'TCP 21 (FTP)', 'TCP 22 (SSH)', 'TCP 23 (telnet)', 'TCP 25 (SMTP)', 'UDP 123 (NTP)', 'TCP 3389 (rdesktop)'],
+                        [new Date(2011, 0, 1), 4, 5, 4, 100, 1, 1],
+                        [new Date(2011, 0, 2), 2, 6, 2, 110, 2, 1],
+                        [new Date(2011, 0, 3), 4, 8, 1, 98, 3, 1],
+                        [new Date(2011, 0, 4), 6, 4, 6, 123, 4, 1],
+                        [new Date(2011, 0, 5), 10, 3, 6, 117, 5, 1],
+                        [new Date(2011, 0, 6), 17, 5, 5, 67, 6, 1],
+                        [new Date(2011, 0, 7), 22, 2, 4, 128, 7, 1],
+                    ]);
+
+                var options = {
+                    title: '',
+                    hAxis: {title: 'Date', format: 'yyyy-MM-dd', textStyle: {fontSize: 12}, titleTextStyle: {italic: false, fontSize: 13}},
+                    vAxis: {title: 'Attackers', textStyle: {fontSize: 12}, titleTextStyle: {italic: false, fontSize: 13}},
+                    trendlines: {
+                        0: {type: 'polynomial', degree: 3},
+                        1: {type: 'polynomial', degree: 3},
+                        2: {type: 'polynomial', degree: 3},
+                        3: {type: 'polynomial', degree: 3},
+                        4: {type: 'polynomial', degree: 3},
+                        5: {type: 'polynomial', degree: 3},
+                    },
+                    legend: {position: 'right', textStyle: {fontSize: 13}},
+                    fontName: 'monospace',
+                    chartArea: {left: 50, top: 50, width: "75%", height: "80%"},
+                };
+
+                var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+
+                google.visualization.events.addListener(chart, 'onmouseover', function(e){
+                    $('svg *:contains("x")').each(function(){
+                        $(this).text('')
+                    })
+                })
+
+                chart.draw(data, options);
+            }
+        </script>
+    </head>
+
+    <body>
+        <noscript>
+            <div class="disabled">
+                Javascript is disabled in your browser. You must have Javascript enabled to utilize the functionality of this page.
+            </div>
+        </noscript>
+
+        <div id="chart_div" style="height: 600px; width: 1200px"></div>
+    </body>
+</html>
