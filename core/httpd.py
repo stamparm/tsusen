@@ -137,19 +137,20 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
         keys = series.keys()
 
-        totals = {}
-        for key in keys:
-            totals[key] = sum(series[key].values())
+        if keys:
+            totals = {}
+            for key in keys:
+                totals[key] = sum(series[key].values())
 
-        keys = sorted(keys, key=lambda key: totals[key], reverse=True)
-        result = "['Date',%s],\n" % ','.join("'%s'" % key for key in keys)
+            keys = sorted(keys, key=lambda key: totals[key], reverse=True)
+            result += "['Date',%s],\n" % ','.join("'%s'" % key for key in keys)
 
-        for date in sorted(dates):
-            year, month, day = date.split('-')
-            result += "[new Date(%s,%d,%s)," % (year, int(month) - 1, day)
-            for serie in keys:
-                result += "%s," % series[serie].get(date, 0)
-            result += "],\n"
+            for date in sorted(dates):
+                year, month, day = date.split('-')
+                result += "[new Date(%s,%d,%s)," % (year, int(month) - 1, day)
+                for serie in keys:
+                    result += "%s," % series[serie].get(date, 0)
+                result += "],\n"
 
         return result
 
