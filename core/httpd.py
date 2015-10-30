@@ -117,7 +117,6 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 reader = csv.DictReader(f, delimiter=' ')
 
                 for row in reader:
-                    # {'count': '6', 'proto': 'UDP', 'src_ip': '192.168.3.100', 'dst_port': '137', 'dst_ip': '192.168.3.255', 'first_seen': '1446127066', 'last_seen': '1446127081'}
                     try:
                         port_name = socket.getservbyport(int(row['dst_port']), row['proto'].lower())
                     except:
@@ -137,9 +136,10 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         keys = series.keys()
 
         if keys:
+            last_date = max(dates)
             totals = {}
             for key in keys:
-                totals[key] = sum(series[key].values())
+                totals[key] = series[key].get(last_date, 0)
 
             keys = sorted(keys, key=lambda key: totals[key], reverse=True)
             result += "['Date',%s],\n" % ','.join("'%s'" % key for key in keys)
