@@ -128,23 +128,21 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                     series[serie][date] += 1
                     dates.add(date)
 
-            keys = series.keys()
-            def _key(value):
-                match = re.search(r"\d+", value)
-                if match:
-                    return int(match.group(0))
-                else:
-                    return None
+        keys = series.keys()
 
-            keys = sorted(keys, key=_key)
-            result = "['Date',%s],\n" % ','.join("'%s'" % key for key in keys)
+        totals = {}
+        for key in keys:
+            totals[key] = sum(series[key].values())
 
-            for date in sorted(dates):
-                year, month, day = date.split('-')
-                result += "[new Date(%s,%d,%s)," % (year, int(month) - 1, day)
-                for serie in keys:
-                    result += "%s," % series[serie].get(date, 0)
-                result += "],\n"
+        keys = sorted(keys, key=lambda key: totals[key], reverse=True)
+        result = "['Date',%s],\n" % ','.join("'%s'" % key for key in keys)
+
+        for date in sorted(dates):
+            year, month, day = date.split('-')
+            result += "[new Date(%s,%d,%s)," % (year, int(month) - 1, day)
+            for serie in keys:
+                result += "%s," % series[serie].get(date, 0)
+            result += "],\n"
 
         return result
 

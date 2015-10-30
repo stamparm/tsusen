@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>tsusen panel</title>
+        <title>stats</title>
 
         <link rel="shortcut icon" href="favicon.ico" />
 
@@ -14,26 +14,22 @@
             google.setOnLoadCallback(drawChart);
 
             function drawChart() {
-                    var data = google.visualization.arrayToDataTable([
+                var data = google.visualization.arrayToDataTable([
 <!TRENDLINE_DATA!>
-                    ]);
+]);
 
                 var options = {
                     title: '',
                     hAxis: {title: 'Date', format: 'yyyy-MM-dd', textStyle: {fontSize: 12}, titleTextStyle: {italic: false, fontSize: 13}},
-                    vAxis: {title: 'Attackers', textStyle: {fontSize: 12}, titleTextStyle: {italic: false, fontSize: 13}},
-                    trendlines: {
-                        0: {type: 'polynomial', degree: 3},
-                        1: {type: 'polynomial', degree: 3},
-                        2: {type: 'polynomial', degree: 3},
-                        3: {type: 'polynomial', degree: 3},
-                        4: {type: 'polynomial', degree: 3},
-                        5: {type: 'polynomial', degree: 3},
-                    },
+                    vAxis: {title: 'Intruders', textStyle: {fontSize: 12}, titleTextStyle: {italic: false, fontSize: 13}},
+                    trendlines: { },
                     legend: {position: 'right', textStyle: {fontSize: 13}},
                     fontName: 'monospace',
                     chartArea: {left: 50, top: 50, width: "75%", height: "80%"},
                 };
+
+                for (var i = 0; i < data.getNumberOfColumns() - 1; i++)
+                    options.trendlines[i] = {type: 'polynomial', degree: 3};
 
                 var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
 
