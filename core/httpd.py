@@ -105,8 +105,7 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         result = ""
         series = {}
         dates = set()
-        for filename in glob.glob(os.path.join(LOG_DIRECTORY, "*.csv")):
-        #for filename in ("/tmp/2015-10-29.csv", "/tmp/2015-10-30.csv"):
+        for filename in sorted(glob.glob(os.path.join(LOG_DIRECTORY, "*.csv")))[-config.TRENDLINE_PERIOD:]:
             with open(filename, "rb") as f:
                 match = re.search(r"([\d-]+)\.csv", filename)
 
