@@ -45,7 +45,7 @@ def _log_write(force=False, filename=None):
     if LAST_FILENAME is None:
         LAST_FILENAME = filename
 
-    if force or (current - LAST_WRITE) > WRITE_PERIOD:
+    if force or (current - LAST_WRITE) > config.WRITE_PERIOD:
         if not os.path.exists(filename):
             open(filename, "w+").close()
             os.chmod(filename, DEFAULT_LOG_PERMISSIONS)
@@ -101,7 +101,7 @@ def _process_packet(packet, sec, usec):
                     local_src = True
                     break
 
-            if proto is None or any(_ in BLACKLISTED_ADDRESSES for _ in (src_ip, dst_ip)):
+            if proto is None or any(_ in config.BLACKLISTED_ADDRESSES for _ in (src_ip, dst_ip)):
                 return
 
             # only process SYN packets
@@ -212,15 +212,15 @@ def init_sensor():
 
     print "[i] using '%s' for log storage" % LOG_DIRECTORY
 
-    print "[i] opening interface '%s'" % MONITOR_INTERFACE
+    print "[i] opening interface '%s'" % config.MONITOR_INTERFACE
 
     try:
-        _cap = pcapy.open_live(MONITOR_INTERFACE, SNAP_LEN, True, 0)
+        _cap = pcapy.open_live(config.MONITOR_INTERFACE, SNAP_LEN, True, 0)
     except socket.error, ex:
         if "permitted" in str(ex):
             exit("\n[x] please run with sudo/Administrator privileges")
         elif "No such device" in str(ex):
-            exit("\n[x] no such device '%s'" % MONITOR_INTERFACE)
+            exit("\n[x] no such device '%s'" % config.MONITOR_INTERFACE)
         else:
             raise
     except Exception, ex:
@@ -229,9 +229,9 @@ def init_sensor():
         else:
             raise
 
-    if CAPTURE_FILTER:
-        print "[i] setting filter '%s'" % CAPTURE_FILTER
-        _cap.setfilter(CAPTURE_FILTER)
+    if config.CAPTURE_FILTER:
+        print "[i] setting filter '%s'" % config.CAPTURE_FILTER
+        _cap.setfilter(config.CAPTURE_FILTER)
 
     _datalink = _cap.datalink()
     if _datalink not in (pcapy.DLT_EN10MB, pcapy.DLT_LINUX_SLL):

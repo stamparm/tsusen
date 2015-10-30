@@ -13,12 +13,11 @@ import threading
 import traceback
 import urlparse
 
+from settings import config
 from settings import DISABLED_CONTENT_EXTENSIONS
 from settings import DEBUG
 from settings import SERVER_HEADER
 from settings import HTML_DIR
-from settings import HTTP_ADDRESS
-from settings import HTTP_PORT
 from settings import LOG_DIRECTORY
 
 class ThreadingServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
@@ -170,9 +169,9 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 traceback.print_exc()
 
 def start_httpd():
-    server = ThreadingServer((HTTP_ADDRESS, HTTP_PORT), ReqHandler)
+    server = ThreadingServer((config.HTTP_ADDRESS, config.HTTP_PORT), ReqHandler)
     thread = threading.Thread(target=server.serve_forever)
     thread.daemon = True
     thread.start()
 
-    print "[i] running HTTP server at '%s:%d'" % (HTTP_ADDRESS, HTTP_PORT)
+    print "[i] running HTTP server at '%s:%d'" % (config.HTTP_ADDRESS, config.HTTP_PORT)
