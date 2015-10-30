@@ -21,6 +21,7 @@ import traceback
 import urlparse
 
 from settings import config
+from settings import DEFAULT_LOG_PERMISSIONS
 from settings import DISABLED_CONTENT_EXTENSIONS
 from settings import DEBUG
 from settings import SERVER_HEADER
@@ -98,6 +99,57 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.wfile.flush()
             self.wfile.close()
 
+    def do_PUT(self):
+        """
+        e.g.: curl -T 2015-10-28.csv http://<server>:8339
+        """
+
+        path, query = self.path.split('?', 1) if '?' in self.path else (self.path, "")
+
+        path = path.strip('/')
+        match = re.search(r"\A([\d-]+)\.csv\Z", path)
+
+        if match:
+            date = match.group(1)
+        else:
+            return
+
+        filename = os.path.join(LOG_DIRECTORY, path)
+        length = int(self.headers.getheader('Content-length'))
+        content = self.rfile.read(length)
+
+        if not os.path.exists(filename):
+            with open(filename, "w+b") as f:
+                f.write(content)
+            os.chmod(filename, DEFAULT_LOG_PERMISSIONS)
+        else:
+            first = None
+            result = set()
+
+            with open(filename, "r") as f:
+                for line in f.xreadlines():
+                    line = line.strip()
+                    if not line:
+                        continue
+                    if not first:
+                        first = line
+                        continue
+                    result.add(line)
+
+            for line in content.split("\n")[1:]:
+                line = line.strip()
+                if not line:
+                    continue
+                result.add(line)
+
+            with open(filename, "w+b") as f:
+                f.write("%s\n" % first)
+                for line in result:
+                    f.write("%s\n" % line)
+
+        self.send_response(httplib.OK)
+        self.send_header("Connection", "close")
+
     def _url(self):
         return self.path
 
@@ -105,6 +157,7 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         result = ""
         series = {}
         dates = set()
+
         for filename in sorted(glob.glob(os.path.join(LOG_DIRECTORY, "*.csv")))[-config.TRENDLINE_PERIOD:]:
             with open(filename, "rb") as f:
                 match = re.search(r"([\d-]+)\.csv", filename)
