@@ -5,6 +5,7 @@ Copyright (c) 2015 Miroslav Stampar (@stamparm)
 See the file 'LICENSE' for copying permission
 """
 
+import csv
 import datetime
 import os
 import re
@@ -236,6 +237,21 @@ def init_sensor():
     _datalink = _cap.datalink()
     if _datalink not in (pcapy.DLT_EN10MB, pcapy.DLT_LINUX_SLL):
         exit("[x] datalink type '%s' not supported" % _datalink)
+
+    current = time.time()
+    filename = os.path.join(LOG_DIRECTORY, "%s.csv" % datetime.date.today().strftime(DATE_FORMAT))
+    if os.path.exists(filename):
+        with open(filename, "rb") as f:
+            reader = csv.DictReader(f, delimiter=' ')
+            for row in reader:
+                dst_key = "%s:%s:%s" % (row["proto"], row["dst_ip"], row["dst_port"])
+                stat_key = "%s:%s" % (dst_key, row["src_ip"])
+
+                if dst_key not in _traffic:
+                    _traffic[dst_key] = set()
+
+                _traffic[dst_key].add(row["src_ip"])
+                _auxiliary[stat_key] = [int(row["first_seen"]), int(row["last_seen"]), int(row["count"])]
 
 def start_sensor():
     try:
