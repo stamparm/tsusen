@@ -34,6 +34,9 @@ CONFIG_FILE = os.path.join(ROOT_DIR, "tsusen.conf")
 DISABLED_CONTENT_EXTENSIONS = (".py", ".pyc", ".md", ".txt", ".bak", ".conf", ".zip", "~")
 SERVER_HEADER = "%s/%s" % (NAME, VERSION)
 
+# Reference: https://sixohthree.com/media/2003/06/26/lock_your_doors/portscan.txt
+MISC_PORTS = { 1723: "pptp", 1900: "upnp", 3128: "squid", 3389: "ms-term-serv", 5900: "vnc", 5901: "vnc-1", 5902: "vnc-2", 5903: "vnc-3" }
+
 def _read_config():
     global config
 

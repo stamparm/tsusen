@@ -27,6 +27,7 @@ from settings import DEBUG
 from settings import SERVER_HEADER
 from settings import HTML_DIR
 from settings import LOG_DIRECTORY
+from settings import MISC_PORTS
 
 class ThreadingServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
     def finish_request(self, *args, **kwargs):
@@ -171,7 +172,8 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
                 for row in reader:
                     try:
-                        port_name = socket.getservbyport(int(row['dst_port']), row['proto'].lower())
+                        port = int(row['dst_port'])
+                        port_name = MISC_PORTS.get(port) or socket.getservbyport(port, row['proto'].lower())
                     except:
                         port_name = None
                     finally:
