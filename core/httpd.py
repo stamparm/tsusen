@@ -157,7 +157,7 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return self.path
 
     def _trendline_data(self):
-        result = ""
+        result = "\n"
         series = {}
         dates = set()
 
@@ -212,6 +212,8 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 for serie in keys:
                     result += "%s," % series[serie].get(date, 0)
                 result += "],\n"
+
+            result = result[:-1]
 
         return result
 
