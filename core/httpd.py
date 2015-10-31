@@ -33,6 +33,8 @@ class ThreadingServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
     def finish_request(self, *args, **kwargs):
         try:
             BaseHTTPServer.HTTPServer.finish_request(self, *args, **kwargs)
+        except KeyboardInterrupt:
+            raise
         except:
             if DEBUG:
                 traceback.print_exc()
@@ -174,6 +176,8 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                     try:
                         port = int(row['dst_port'])
                         port_name = MISC_PORTS.get(port) or socket.getservbyport(port, row['proto'].lower())
+                    except KeyboardInterrupt:
+                        raise
                     except:
                         port_name = None
                     finally:
@@ -193,7 +197,10 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if keys:
             last_date = max(dates)
             totals = {}
-            for key in keys:
+            for key in list(keys):
+                if any(series[key].get(date, 0) < config.TRENDLINE_DAILY_THRESHOLD for date in dates if date != last_date):
+                    if all(series[key].get(date, 0) < config.TRENDLINE_DAILY_BURST for date in dates):
+                        del keys[keys.index(key)]
                 totals[key] = series[key].get(last_date, 0)
 
             keys = sorted(keys, key=lambda key: totals[key], reverse=True)
@@ -224,6 +231,8 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def finish(self):
         try:
             BaseHTTPServer.BaseHTTPRequestHandler.finish(self)
+        except KeyboardInterrupt:
+            raise
         except:
             if DEBUG:
                 traceback.print_exc()
