@@ -161,6 +161,8 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def _dataset(self):
         result = "\n"
         dates = set()
+        rows = []
+        indexes = {}
 
         for filename in sorted(glob.glob(os.path.join(LOG_DIRECTORY, "*.csv")))[-config.TRENDLINE_PERIOD:]:
             with open(filename, "rb") as f:
@@ -174,23 +176,34 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 reader = csv.DictReader(f, delimiter=' ')
 
                 for row in reader:
-                    try:
-                        port = int(row['dst_port'])
-                        port_name = MISC_PORTS.get(port) or socket.getservbyport(port, row['proto'].lower())
-                    except KeyboardInterrupt:
-                        raise
-                    except:
-                        port_name = None
-                    finally:
-                        result += "["
-                        for column in ("proto", "dst_port", "dst_ip", "src_ip", "first_seen", "last_seen", "count"):
-                            if "_seen" in column:
-                                result += '"%s",' % time.strftime(TIME_FORMAT, time.localtime(int(row[column])))
-                            elif "_port" in column and port_name:
-                                result += '"%s (%s)",' % (row[column], port_name)
-                            else:
-                                result += '"%s",' % row[column]
-                        result += "],\n"
+                    key = (row["proto"], row["dst_port"], row["dst_ip"], row["src_ip"])
+                    if key not in indexes:
+                        indexes[key] = len(rows)
+                        rows.append(row)
+                    else:
+                        index = indexes[key]
+                        rows[index]["first_seen"] = min(int(rows[index]["first_seen"]), int(row["first_seen"]))
+                        rows[index]["last_seen"] = max(int(rows[index]["last_seen"]), int(row["last_seen"]))
+                        rows[index]["count"] = int(rows[index]["count"]) + int(row["count"])
+
+        for row in rows:
+            try:
+                port = int(row['dst_port'])
+                port_name = MISC_PORTS.get(port) or socket.getservbyport(port, row['proto'].lower())
+            except KeyboardInterrupt:
+                raise
+            except:
+                port_name = None
+            finally:
+                result += "["
+                for column in ("proto", "dst_port", "dst_ip", "src_ip", "first_seen", "last_seen", "count"):
+                    if "_seen" in column:
+                        result += '"%s",' % time.strftime(TIME_FORMAT, time.localtime(int(row[column])))
+                    elif "_port" in column and port_name:
+                        result += '"%s (%s)",' % (row[column], port_name)
+                    else:
+                        result += '"%s",' % row[column]
+                result += "],\n"
 
         return result
 
