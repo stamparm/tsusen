@@ -17,6 +17,7 @@ import re
 import socket
 import SocketServer
 import threading
+import time
 import traceback
 import urlparse
 
@@ -28,6 +29,7 @@ from settings import SERVER_HEADER
 from settings import HTML_DIR
 from settings import LOG_DIRECTORY
 from settings import MISC_PORTS
+from settings import TIME_FORMAT
 
 class ThreadingServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
     def finish_request(self, *args, **kwargs):
@@ -155,6 +157,42 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def _url(self):
         return self.path
+
+    def _dataset(self):
+        result = "\n"
+        dates = set()
+
+        for filename in sorted(glob.glob(os.path.join(LOG_DIRECTORY, "*.csv")))[-config.TRENDLINE_PERIOD:]:
+            with open(filename, "rb") as f:
+                match = re.search(r"([\d-]+)\.csv", filename)
+
+                if match:
+                    date = match.group(1)
+                else:
+                    continue
+
+                reader = csv.DictReader(f, delimiter=' ')
+
+                for row in reader:
+                    try:
+                        port = int(row['dst_port'])
+                        port_name = MISC_PORTS.get(port) or socket.getservbyport(port, row['proto'].lower())
+                    except KeyboardInterrupt:
+                        raise
+                    except:
+                        port_name = None
+                    finally:
+                        result += "["
+                        for column in ("proto", "dst_port", "dst_ip", "src_ip", "first_seen", "last_seen", "count"):
+                            if "_seen" in column:
+                                result += '"%s",' % time.strftime(TIME_FORMAT, time.localtime(int(row[column])))
+                            elif "_port" in column and port_name:
+                                result += '"%s (%s)",' % (row[column], port_name)
+                            else:
+                                result += '"%s",' % row[column]
+                        result += "],\n"
+
+        return result
 
     def _trendline_data(self):
         result = "\n"

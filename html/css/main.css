@@ -1,0 +1,18 @@
+body { font: 11px monospace }
+td, th { padding: 2px 4px }
+#details { border-collapse: collapse }
+#details tr { background-color: #fff; border-color: #a8a8a8 }
+#details td { white-space: nowrap; border-color: #a8a8a8 }
+#details thead { color: #2f2f2f; border-color: #a8a8a8 }
+#details tr:nth-child(2n+1)  { background-color: #f8f8f8; border-color: #a8a8a8 }
+#details thead > tr > th { padding-left: 10px }
+#details { border-color: #a8a8a8 }
+#details .highlighted { background-color: #abb9d3 !important }
+.time-day {
+    background-color: #eee;
+    border-radius: 20px;
+    color: #777;
+    font-size: 80%;
+    padding: 2px 2px;
+    margin-bottom: 1px;
+}

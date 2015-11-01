@@ -24,6 +24,7 @@ ETH_LENGTH = 14
 IPPROTO_LUT = dict(((getattr(socket, _), _.replace("IPPROTO_", "")) for _ in dir(socket) if _.startswith("IPPROTO_")))
 LOCAL_ADDRESSES = []
 DATE_FORMAT = "%Y-%m-%d"
+TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 SYSTEM_LOG_DIRECTORY = "/var/log" if not subprocess.mswindows else "C:\\Windows\\Logs"
 LOG_DIRECTORY = os.path.join(SYSTEM_LOG_DIRECTORY, NAME)
 DEFAULT_LOG_PERMISSIONS = stat.S_IREAD | stat.S_IWRITE | stat.S_IRGRP | stat.S_IROTH
