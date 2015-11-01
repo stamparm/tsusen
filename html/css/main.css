@@ -16,3 +16,14 @@ td, th { padding: 2px 4px }
     padding: 2px 2px;
     margin-bottom: 1px;
 }
+.flag {
+    width: 16px;
+    height: 11px;
+    background: url("../images/flags.png") no-repeat;
+    display: inline-block;
+    /*margin-bottom: 2px;*/
+    overflow: hidden; 
+}
+.flag.flag-unknown {
+    background: url("../images/unknown.png") no-repeat;
+}
