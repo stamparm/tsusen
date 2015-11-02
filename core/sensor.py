@@ -102,7 +102,7 @@ def _process_packet(packet, sec, usec):
                     local_src = True
                     break
 
-            if proto is None or any(_ in config.BLACKLISTED_ADDRESSES for _ in (src_ip, dst_ip)):
+            if proto is None or any(_ in (config.IGNORE_ADDRESSES or "") for _ in (src_ip, dst_ip)):
                 return
 
             # only process SYN packets
@@ -112,6 +112,9 @@ def _process_packet(packet, sec, usec):
 
                 i = iph_length + ETH_LENGTH
                 src_port, dst_port, _, _, _, flags = struct.unpack("!HHLLBB", packet[i:i + 14])
+
+                if any(str(_) in (config.IGNORE_PORTS or "") for _ in (src_port, dst_port)):
+                    return
 
                 dst_key = "%s:%s:%s" % (proto, dst_ip, dst_port)
                 stat_key = "%s:%s" % (dst_key, src_ip)
@@ -138,6 +141,9 @@ def _process_packet(packet, sec, usec):
                     src_port, dst_port = struct.unpack("!HH", _)
                 else:                               # non-TCP/UDP (e.g. ICMP)
                     src_port, dst_port = '-', '-'
+
+                if any(str(_) in (config.IGNORE_PORTS or "") for _ in (src_port, dst_port)):
+                    return
 
                 dst_key = "%s:%s:%s" % (proto, dst_ip, dst_port)
                 stat_key = "%s:%s" % (dst_key, src_ip)
