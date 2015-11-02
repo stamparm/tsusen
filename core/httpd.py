@@ -8,6 +8,7 @@ See the file 'LICENSE' for copying permission
 import BaseHTTPServer
 import csv
 import cStringIO
+import datetime
 import httplib
 import mimetypes
 import glob
@@ -17,7 +18,6 @@ import re
 import socket
 import SocketServer
 import threading
-import time
 import traceback
 import urlparse
 
@@ -198,7 +198,7 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 result += "["
                 for column in ("proto", "dst_port", "dst_ip", "src_ip", "first_seen", "last_seen", "count"):
                     if "_seen" in column:
-                        result += '"%s",' % time.strftime(TIME_FORMAT, time.localtime(int(row[column])))
+                        result += '"%s",' % datetime.datetime.utcfromtimestamp(int(row[column])).strftime(TIME_FORMAT)
                     elif "_port" in column and port_name:
                         result += '"%s (%s)",' % (row[column], port_name)
                     else:

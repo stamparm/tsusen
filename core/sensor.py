@@ -38,7 +38,7 @@ def _log_write(force=False, filename=None):
     global LAST_WRITE
 
     current = time.time()
-    filename = filename or os.path.join(LOG_DIRECTORY, "%s.csv" % datetime.date.today().strftime(DATE_FORMAT))
+    filename = filename or os.path.join(LOG_DIRECTORY, "%s.csv" % datetime.datetime.utcnow().strftime(DATE_FORMAT))
 
     if LAST_WRITE is None:
         LAST_WRITE = current
@@ -238,8 +238,7 @@ def init_sensor():
     if _datalink not in (pcapy.DLT_EN10MB, pcapy.DLT_LINUX_SLL):
         exit("[x] datalink type '%s' not supported" % _datalink)
 
-    current = time.time()
-    filename = os.path.join(LOG_DIRECTORY, "%s.csv" % datetime.date.today().strftime(DATE_FORMAT))
+    filename = os.path.join(LOG_DIRECTORY, "%s.csv" % datetime.datetime.utcnow().strftime(DATE_FORMAT))
     if os.path.exists(filename):
         with open(filename, "rb") as f:
             reader = csv.DictReader(f, delimiter=' ')

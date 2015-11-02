@@ -47,7 +47,7 @@ function drawChart() {
     var options = {
         title: '',
         hAxis: {title: 'Date', format: 'yyyy-MM-dd', textStyle: {fontSize: 12}, titleTextStyle: {italic: false, fontSize: 13}},
-        vAxis: {title: 'Intruders', textStyle: {fontSize: 12}, titleTextStyle: {italic: false, fontSize: 13}},
+        vAxis: {title: 'Intruders', textStyle: {fontSize: 12}, titleTextStyle: {italic: false, fontSize: 13}, logScale: true, minValue: 0},
         trendlines: { },
         legend: {position: 'right', textStyle: {fontSize: 13}},
         fontName: 'monospace',
