@@ -55,7 +55,7 @@ function drawChart() {
     };
 
     for (var i = 0; i < data.getNumberOfColumns() - 1; i++)
-        options.trendlines[i] = {type: 'polynomial', degree: 3, opacity: 0.6};
+        options.trendlines[i] = {type: 'polynomial', degree: 3, opacity: 0.6, lineWidth: 2};
 
     var chart = new google.visualization.ScatterChart(document.getElementById('chart'));
 
