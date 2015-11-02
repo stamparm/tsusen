@@ -1,5 +1,6 @@
 body { font: 11px monospace }
 td, th { padding: 2px 4px }
+#chart { height: 600px; width: 1200px; border: 1px solid #a8a8a8 }
 #details { border-collapse: collapse }
 #details tr { background-color: #fff; border-color: #a8a8a8 }
 #details td { white-space: nowrap; border-color: #a8a8a8 }

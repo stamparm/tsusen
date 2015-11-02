@@ -55,7 +55,7 @@ function drawChart() {
     };
 
     for (var i = 0; i < data.getNumberOfColumns() - 1; i++)
-        options.trendlines[i] = {type: 'polynomial', degree: 3};
+        options.trendlines[i] = {type: 'polynomial', degree: 3, opacity: 0.6};
 
     var chart = new google.visualization.ScatterChart(document.getElementById('chart'));
 
@@ -87,6 +87,10 @@ $(document).ready(function() {
         ],
         columnDefs: [
             {
+                orderSequence: [ "desc", "asc" ], 
+                targets: [ DATATABLES_COLUMNS.FIRST_SEEN, DATATABLES_COLUMNS.LAST_SEEN, DATATABLES_COLUMNS.COUNT ]
+            },
+            {
                 render: function (data, type, row) {
                     var parts = data.split(' ');
                     var day = parts[0].split('-')[2];
@@ -97,7 +101,7 @@ $(document).ready(function() {
                 targets: [ DATATABLES_COLUMNS.FIRST_SEEN, DATATABLES_COLUMNS.LAST_SEEN ],
             },
         ],
-        iDisplayLength: 25,
+        iDisplayLength: 10,
         aaSorting: [ [DATATABLES_COLUMNS.LAST_SEEN, 'desc'] ],
         fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
             function nslookup(event, ui) {
