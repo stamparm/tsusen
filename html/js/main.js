@@ -1,6 +1,7 @@
 var DAY_SUFFIXES = { 1: "st", 2: "nd", 3: "rd" };
 var DATATABLES_COLUMNS = { PROTO: 0, DST_PORT: 1, DST_IP: 2, SRC_IP: 3, FIRST_SEEN: 4, LAST_SEEN: 5, COUNT: 6 }
 var IP_COUNTRY = {};
+var POINT_SIZE = 4.5;
 
 jQuery.extend(jQuery.fn.dataTableExt.oSort, {
     // Reference: http://cdn.datatables.net/plug-ins/3cfcc339e89/sorting/date-euro.js
@@ -60,6 +61,19 @@ function drawChart() {
     var chart = new google.visualization.ScatterChart(document.getElementById('chart'));
 
     chart.draw(data, options);
+
+    google.visualization.events.addListener(chart, 'onmouseover', function(e){
+        var circles = $('svg g g g circle');
+        if (circles.length) {
+            var fill = circles[circles.length - 1].attributes["fill"].value;
+            $("circle[fill='" + fill + "']").attr("r", POINT_SIZE * 1.5);
+        }
+    });
+
+    google.visualization.events.addListener(chart, 'onmouseout', function(e){
+        $("circle").attr("r", POINT_SIZE);
+    });
+
 }
 
 
