@@ -36,7 +36,7 @@ DISABLED_CONTENT_EXTENSIONS = (".py", ".pyc", ".md", ".txt", ".bak", ".conf", ".
 SERVER_HEADER = "%s/%s" % (NAME, VERSION)
 
 # Reference: https://sixohthree.com/media/2003/06/26/lock_your_doors/portscan.txt
-MISC_PORTS = { 17: "qotd", 53: "dns", 135: "dcom-rpc", 1723: "pptp", 1900: "upnp", 3128: "squid", 3389: "rdesktop", 5900: "vnc", 5901: "vnc-1", 5902: "vnc-2", 5903: "vnc-3", 6379: "redis", 8338: "maltrail", 8339: "tsusen", 9200: "wap-wsp", 11211: "memcached", 27017: "mongo" }
+MISC_PORTS = { 17: "qotd", 53: "dns", 135: "dcom-rpc", 1433: "mssql", 1723: "pptp", 1900: "upnp", 3128: "squid", 3389: "rdesktop", 5900: "vnc", 5901: "vnc-1", 5902: "vnc-2", 5903: "vnc-3", 6379: "redis", 8338: "maltrail", 8339: "tsusen", 9200: "wap-wsp", 11211: "memcached", 27017: "mongo" }
 
 def _read_config():
     global config
