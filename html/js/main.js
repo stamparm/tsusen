@@ -2,6 +2,8 @@ var DAY_SUFFIXES = { 1: "st", 2: "nd", 3: "rd" };
 var DATATABLES_COLUMNS = { PROTO: 0, DST_PORT: 1, DST_IP: 2, SRC_IP: 3, FIRST_SEEN: 4, LAST_SEEN: 5, COUNT: 6 }
 var IP_COUNTRY = {};
 var POINT_SIZE = 4.5;
+var LINE_WIDTH = 1.5;
+var DEFAULT_OPACITY = 0.4;
 
 jQuery.extend(jQuery.fn.dataTableExt.oSort, {
     // Reference: http://cdn.datatables.net/plug-ins/3cfcc339e89/sorting/date-euro.js
@@ -73,7 +75,7 @@ function drawChart() {
     };
 
     for (var i = 0; i < data.getNumberOfColumns() - 1; i++)
-        options.trendlines[i] = {type: 'polynomial', degree: 3, opacity: 0.5, lineWidth: 2, tooltip: false};
+        options.trendlines[i] = {type: 'polynomial', degree: 3, opacity: 1, lineWidth: 1, tooltip: false};
 
     var chart = new google.visualization.ScatterChart(document.getElementById('chart'));
 
@@ -84,17 +86,20 @@ function drawChart() {
         if (circles.length) {
             var fill = circles[circles.length - 1].attributes["fill"].value;
             $("circle[fill='" + fill + "']").attr("r", POINT_SIZE * 1.3);
-            $("circle[fill!='" + fill + "']").attr("fill-opacity", 0.05);
-            $("path[stroke!='" + fill + "']").attr("stroke-opacity", 0.05);
+            $("circle[fill='" + fill + "']").attr("fill-opacity", 1);
+            $("path[stroke='" + fill + "']").attr("stroke-opacity", 1);
+            $("path[stroke='" + fill + "']").attr("stroke-width", LINE_WIDTH * 3);
         }
     });
 
     google.visualization.events.addListener(chart, 'onmouseout', function(e){
-        $("circle").attr("r", POINT_SIZE);
-        $("circle").attr("fill-opacity", 1);
-        $("path").attr("stroke-opacity", 0.5);
+        $("circle").attr("r", POINT_SIZE).attr("fill-opacity", DEFAULT_OPACITY);
+        $("path").attr("stroke-width", LINE_WIDTH).attr("stroke-opacity", DEFAULT_OPACITY);
     });
 
+    google.visualization.events.addListener(chart, 'ready', function(e){
+        google.visualization.events.trigger(chart, 'onmouseout', e);
+    });
 }
 
 
