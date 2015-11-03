@@ -7,7 +7,7 @@ jQuery.extend(jQuery.fn.dataTableExt.oSort, {
     // Reference: http://cdn.datatables.net/plug-ins/3cfcc339e89/sorting/date-euro.js
     "date-custom-pre": function ( a ) {
         var x = Infinity;
-        var match = a.match(/title=["']([^"']+)/);
+        var match = a.match(/date=["']([^"']+)/);
         if (match !== null) {
             var frDatea = match[1].split(' ');
             var frTimea = frDatea[1].split('.')[0].split(':');
@@ -104,7 +104,7 @@ $(document).ready(function() {
                     var day = parts[0].split('-')[2];
                     var dayint = parseInt(day);
                     var suffix = (dayint > 10 && dayint < 20) ? "th" : DAY_SUFFIXES[dayint % 10] || "th";
-                    return "<div><span class='time-day'>" + day + "<sup>" + suffix + "</sup></span> " + parts[1].split('.')[0] + "</div>";
+                    return "<div date='" + data + "'><span class='time-day'>" + day + "<sup>" + suffix + "</sup></span> " + parts[1].split('.')[0] + "</div>";
                 },
                 targets: [ DATATABLES_COLUMNS.FIRST_SEEN, DATATABLES_COLUMNS.LAST_SEEN ],
             },
