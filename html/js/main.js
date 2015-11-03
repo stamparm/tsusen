@@ -83,12 +83,16 @@ function drawChart() {
         var circles = $('svg g g g circle');
         if (circles.length) {
             var fill = circles[circles.length - 1].attributes["fill"].value;
-            $("circle[fill='" + fill + "']").attr("r", POINT_SIZE * 1.5);
+            $("circle[fill='" + fill + "']").attr("r", POINT_SIZE * 1.3);
+            $("circle[fill!='" + fill + "']").attr("fill-opacity", 0.05);
+            $("path[stroke!='" + fill + "']").attr("stroke-opacity", 0.05);
         }
     });
 
     google.visualization.events.addListener(chart, 'onmouseout', function(e){
         $("circle").attr("r", POINT_SIZE);
+        $("circle").attr("fill-opacity", 1);
+        $("path").attr("stroke-opacity", 0.5);
     });
 
 }
