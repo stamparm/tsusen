@@ -7,7 +7,7 @@ jQuery.extend(jQuery.fn.dataTableExt.oSort, {
     // Reference: http://cdn.datatables.net/plug-ins/3cfcc339e89/sorting/date-euro.js
     "date-custom-pre": function ( a ) {
         var x = Infinity;
-        var match = a.match(/date=["']([^"']+)/);
+        var match = a.match(/time=["']([^"']+)/);
         if (match !== null) {
             var frDatea = match[1].split(' ');
             var frTimea = frDatea[1].split('.')[0].split(':');
@@ -21,6 +21,23 @@ jQuery.extend(jQuery.fn.dataTableExt.oSort, {
         return a - b;
     },
     "date-custom-desc": function ( a, b ) {
+        return b - a;
+    }
+});
+
+jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+    "port-custom-pre": function ( a ) {
+        var x = 0;
+        var match = a.match(/(\d+).*/);
+        if (match !== null) {
+            x = match[1] * 1;
+        }
+        return x;
+    },
+    "port-custom-asc": function ( a, b ) {
+        return a - b;
+    },
+    "port-custom-desc": function ( a, b ) {
         return b - a;
     }
 });
@@ -86,7 +103,7 @@ $(document).ready(function() {
         data: dataset,
         columns: [
             { title: "proto" },
-            { title: "dst_port" },
+            { title: "dst_port", type: "port-custom" },
             { title: "dst_ip" },
             { title: "src_ip" },
             { title: "first_seen", type: "date-custom" },
@@ -104,7 +121,7 @@ $(document).ready(function() {
                     var day = parts[0].split('-')[2];
                     var dayint = parseInt(day);
                     var suffix = (dayint > 10 && dayint < 20) ? "th" : DAY_SUFFIXES[dayint % 10] || "th";
-                    return "<div date='" + data + "'><span class='time-day'>" + day + "<sup>" + suffix + "</sup></span> " + parts[1].split('.')[0] + "</div>";
+                    return "<div time='" + data + "'><span class='time-day'>" + day + "<sup>" + suffix + "</sup></span> " + parts[1].split('.')[0] + "</div>";
                 },
                 targets: [ DATATABLES_COLUMNS.FIRST_SEEN, DATATABLES_COLUMNS.LAST_SEEN ],
             },
