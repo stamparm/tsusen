@@ -4,6 +4,7 @@ var IP_COUNTRY = {};
 var POINT_SIZE = 4;
 var LINE_WIDTH = 1.5;
 var DEFAULT_OPACITY = 0.7;
+var TRENDLINE_TIMEOUT = null;
 
 jQuery.extend(jQuery.fn.dataTableExt.oSort, {
     // Reference: http://cdn.datatables.net/plug-ins/3cfcc339e89/sorting/date-euro.js
@@ -85,14 +86,19 @@ function drawChart() {
         var circles = $('svg g g g circle');
         if (circles.length) {
             var fill = circles[circles.length - 1].attributes["fill"].value;
-            $("circle[fill='" + fill + "']").attr("r", POINT_SIZE * 1.5).attr("fill-opacity", 1);
+            clearTimeout(TRENDLINE_TIMEOUT);
+            $("circle[fill='" + fill + "']").attr("r", POINT_SIZE * 1.2).attr("fill-opacity", 1);
             $("path[stroke='" + fill + "']").attr("stroke-width", LINE_WIDTH * 2).attr("stroke-opacity", 1);
+            $("circle[fill!='" + fill + "']").attr("fill-opacity", 0.1);
+            $("path[stroke!='" + fill + "']").attr("stroke-opacity", 0.1);
         }
     });
 
     google.visualization.events.addListener(chart, 'onmouseout', function(e){
-        $("circle").attr("r", POINT_SIZE).attr("fill-opacity", DEFAULT_OPACITY);
-        $("path").attr("stroke-width", LINE_WIDTH).attr("stroke-opacity", DEFAULT_OPACITY);
+        TRENDLINE_TIMEOUT = setTimeout(function(){
+            $("circle").attr("r", POINT_SIZE).attr("fill-opacity", DEFAULT_OPACITY);
+            $("path").attr("stroke-width", LINE_WIDTH).attr("stroke-opacity", DEFAULT_OPACITY);
+        }, 500);
     });
 
     google.visualization.events.addListener(chart, 'ready', function(e){
