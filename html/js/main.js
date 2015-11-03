@@ -56,7 +56,7 @@ function drawChart() {
     };
 
     for (var i = 0; i < data.getNumberOfColumns() - 1; i++)
-        options.trendlines[i] = {type: 'polynomial', degree: 3, opacity: 0.6, lineWidth: 2, tooltip: false};
+        options.trendlines[i] = {type: 'polynomial', degree: 3, opacity: 0.5, lineWidth: 2, tooltip: false};
 
     var chart = new google.visualization.ScatterChart(document.getElementById('chart'));
 
@@ -104,12 +104,12 @@ $(document).ready(function() {
                     var day = parts[0].split('-')[2];
                     var dayint = parseInt(day);
                     var suffix = (dayint > 10 && dayint < 20) ? "th" : DAY_SUFFIXES[dayint % 10] || "th";
-                    return "<div title='" + data + "'><span class='time-day'>" + day + "<sup>" + suffix + "</sup></span> " + parts[1].split('.')[0] + "</div>";
+                    return "<div><span class='time-day'>" + day + "<sup>" + suffix + "</sup></span> " + parts[1].split('.')[0] + "</div>";
                 },
                 targets: [ DATATABLES_COLUMNS.FIRST_SEEN, DATATABLES_COLUMNS.LAST_SEEN ],
             },
         ],
-        iDisplayLength: 10,
+        iDisplayLength: 25,
         aaSorting: [ [DATATABLES_COLUMNS.LAST_SEEN, 'desc'] ],
         fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
             function nslookup(event, ui) {
