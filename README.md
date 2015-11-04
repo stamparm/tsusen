@@ -43,4 +43,4 @@ cd tsusen/
 sudo python tsusen.py 
 ```
 
-![Start](http://i.imgur.com/hE67tdo.png)
+![Start](http://i.imgur.com/GE3dLXv.png)
