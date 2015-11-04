@@ -32,3 +32,15 @@ TCP 135 192.165.63.181 222.186.56.43 1446165515 1446202626 5
 ```
 
 where `proto` (e.g. in first entry this is `TCP`) represents the protocol that has been used by initiator coming from `src_ip` (e.g. in first entry this is `222.186.56.107`) toward our `<dst_ip:dst_port>` (e.g. in first entry this is `192.165.63.181:1080`) service, `first_seen` represents the time of (that day's first) connection attempt represented in Unix [timestamp](http://www.onlineconversion.com/unix_time.htm) format (e.g. in first entry this is `1446188056`, which stands for `Fri, 30 Oct 2015 06:54:16 GMT`), `last_seen` represents (that day's last) connection attempt (e.g. in first entry it's the same as the `first_seen` value), while the `count` holds a total number of connection attempts.
+
+The following set of commands should get your tsusen sensor up and running (out of the box with default settings and monitoring interface "any" and HTTP reporting interface on port 8339):
+
+```
+sudo apt-get install python-pcapy
+cd /tmp/
+git clone https://github.com/stamparm/tsusen.git
+cd tsusen/
+sudo python tsusen.py 
+```
+
+![Start](http://i.imgur.com/hE67tdo.png)
