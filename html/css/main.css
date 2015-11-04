@@ -28,3 +28,4 @@ td, th { padding: 2px 4px }
 .flag.flag-unknown {
     background: url("../images/unknown.png") no-repeat;
 }
+.right { margin-left: auto; text-align: right }

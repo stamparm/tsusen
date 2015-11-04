@@ -29,6 +29,21 @@ jQuery.extend(jQuery.fn.dataTableExt.oSort, {
 });
 
 jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+    // Reference: https://cdn.datatables.net/plug-ins/3cfcc339e89/sorting/ip-address.js
+    "ip-address-pre": function (a) {
+        return _ipSortingValue(a);
+    },
+
+    "ip-address-asc": function ( a, b ) {
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    },
+
+    "ip-address-desc": function ( a, b ) {
+        return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+    }
+});
+
+jQuery.extend(jQuery.fn.dataTableExt.oSort, {
     "port-custom-pre": function ( a ) {
         var x = 0;
         var match = a.match(/(\d+).*/);
@@ -56,6 +71,29 @@ function isLocalAddress(ip) {
     else
         return false;
 };
+
+function _ipSortingValue(a) {
+    var x = "";
+
+    match = a.match(/\d+\.\d+\.\d+\.\d+/);
+    if (match !== null) {
+        var m = match[0].split(".");
+
+        for (var i = 0; i < m.length; i++) {
+            var item = m[i];
+
+            if(item.length === 1) {
+                x += "00" + item;
+            } else if(item.length === 2) {
+                x += "0" + item;
+            } else {
+                x += item;
+            }
+        }
+    }
+
+    return x;
+}
 
 google.load("visualization", "1", {packages:["corechart"]});
 google.setOnLoadCallback(drawChart);
@@ -117,8 +155,8 @@ $(document).ready(function() {
         columns: [
             { title: "proto" },
             { title: "dst_port", type: "port-custom" },
-            { title: "dst_ip" },
-            { title: "src_ip" },
+            { title: "dst_ip", type: "ip-address" },
+            { title: "src_ip", type: "ip-address" },
             { title: "first_seen", type: "date-custom" },
             { title: "last_seen", type: "date-custom" },
             { title: "count" },                        

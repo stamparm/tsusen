@@ -21,14 +21,17 @@ import threading
 import traceback
 import urlparse
 
+from common import addr_to_int
+from common import make_mask
 from settings import config
 from settings import DEFAULT_LOG_PERMISSIONS
 from settings import DISABLED_CONTENT_EXTENSIONS
 from settings import DEBUG
-from settings import SERVER_HEADER
 from settings import HTML_DIR
 from settings import LOG_DIRECTORY
+from settings import MAX_IP_FILTER_RANGE
 from settings import MISC_PORTS
+from settings import SERVER_HEADER
 from settings import TIME_FORMAT
 
 class ThreadingServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
@@ -157,6 +160,34 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.send_response(httplib.OK)
         self.send_header("Connection", "close")
 
+    def _get_filters(self):
+        filters = set()
+
+        for item in (self.path, self.headers.get("referer", "")):
+            if "ip[]" in item:
+                for _ in re.findall(r"\bip\[\]=([\d./\-]+)(?:&|\Z)", item):
+                    if "/" in _:
+                        prefix, mask = _.split("/", 1)
+                        mask = int(mask)
+                        start_int = addr_to_int(prefix) & make_mask(mask)
+                        end_int = start_int | ((1 << 32 - mask) - 1)
+                        if (end_int - start_int) > MAX_IP_FILTER_RANGE:
+                            raise
+                        for address in xrange(start_int, end_int + 1):
+                            filters.add(address)
+                    elif "-" in _:
+                        start_address, end_address = _.split("-", 1)
+                        start_int = addr_to_int(start_address)
+                        end_int = addr_to_int(end_address)
+                        if (end_int - start_int) > MAX_IP_FILTER_RANGE:
+                            raise
+                        for address in xrange(start_int, end_int + 1):
+                            filters.add(address)
+                    else:
+                        filters.add(addr_to_int(_))
+
+        return filters
+
     def _url(self):
         return self.url
 
@@ -165,6 +196,8 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         dates = set()
         rows = []
         indexes = {}
+
+        filters = self._get_filters()
 
         for filename in sorted(glob.glob(os.path.join(LOG_DIRECTORY, "*.csv")))[-config.TRENDLINE_PERIOD:]:
             with open(filename, "rb") as f:
@@ -179,6 +212,10 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
                 for row in reader:
                     key = (row["proto"], row["dst_port"], row["dst_ip"], row["src_ip"])
+
+                    if filters and not (addr_to_int(row["src_ip"]) in filters or addr_to_int(row["dst_ip"]) in filters):
+                        continue
+
                     if key not in indexes:
                         indexes[key] = len(rows)
                         rows.append(row)
@@ -214,6 +251,8 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         series = {}
         dates = set()
 
+        filters = self._get_filters()
+
         for filename in sorted(glob.glob(os.path.join(LOG_DIRECTORY, "*.csv")))[-config.TRENDLINE_PERIOD:]:
             with open(filename, "rb") as f:
                 match = re.search(r"([\d-]+)\.csv", filename)
@@ -226,6 +265,9 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 reader = csv.DictReader(f, delimiter=' ')
 
                 for row in reader:
+                    if filters and not (addr_to_int(row["src_ip"]) in filters or addr_to_int(row["dst_ip"]) in filters):
+                        continue
+
                     try:
                         port = int(row['dst_port'])
                         port_name = MISC_PORTS.get(port) or socket.getservbyport(port, row['proto'].lower())
@@ -251,9 +293,10 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             last_date = max(dates)
             totals = {}
             for key in list(keys):
-                if any(series[key].get(date, 0) < config.TRENDLINE_DAILY_THRESHOLD for date in dates if date != last_date):
-                    if all(series[key].get(date, 0) < config.TRENDLINE_DAILY_BURST for date in dates):
-                        del keys[keys.index(key)]
+                if not filters:
+                    if any(series[key].get(date, 0) < config.TRENDLINE_DAILY_THRESHOLD for date in dates if date != last_date):
+                        if all(series[key].get(date, 0) < config.TRENDLINE_DAILY_BURST for date in dates):
+                            del keys[keys.index(key)]
                 totals[key] = series[key].get(last_date, 0)
 
             keys = sorted(keys, key=lambda key: totals[key], reverse=True)
