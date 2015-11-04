@@ -111,7 +111,7 @@ function drawChart() {
         trendlines: { },
         legend: {position: 'right', textStyle: {fontSize: 13}},
         fontName: 'monospace',
-        chartArea: {left: 70, top: 20, width: "75%", height: "80%"},
+        chartArea: {left: 70, top: 20, width: "80%", height: "80%"},
     };
 
     for (var i = 0; i < data.getNumberOfColumns() - 1; i++)
