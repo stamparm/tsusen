@@ -57,6 +57,8 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             if params[key]:
                 params[key] = params[key][-1]
 
+        self.url, self.params = path, params
+
         if path == '/':
             path = "index.html"
 
@@ -156,7 +158,7 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.send_header("Connection", "close")
 
     def _url(self):
-        return self.path
+        return self.url
 
     def _dataset(self):
         result = "\n"
