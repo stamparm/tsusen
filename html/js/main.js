@@ -5,6 +5,7 @@ var POINT_SIZE = 4;
 var LINE_WIDTH = 1.5;
 var DEFAULT_OPACITY = 0.7;
 var TRENDLINE_TIMEOUT = null;
+var RESIZE_TIMEOUT = null;
 
 jQuery.extend(jQuery.fn.dataTableExt.oSort, {
     // Reference: http://cdn.datatables.net/plug-ins/3cfcc339e89/sorting/date-euro.js
@@ -119,6 +120,19 @@ function drawChart() {
     var chart = new google.visualization.ScatterChart(document.getElementById('chart'));
 
     chart.draw(data, options);
+
+    // Reference: http://stackoverflow.com/a/20384135
+    $(window).resize(function() {
+        if(RESIZE_TIMEOUT)
+            clearTimeout(RESIZE_TIMEOUT);
+        RESIZE_TIMEOUT = setTimeout(function() {
+            $(this).trigger('resized');
+        }, 300);
+    });
+
+    $(window).on('resized', function() {
+        drawChart(chart.draw(data, options));
+    });
 
     google.visualization.events.addListener(chart, 'onmouseover', function(e){
         var circles = $('svg g g g circle');
