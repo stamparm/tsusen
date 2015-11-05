@@ -240,6 +240,10 @@ $(document).ready(function() {
                         if ((_.length === 0)||(_ === "localhost")) {
                             _ = "-";
                         }
+                        _ = String(_);
+                        if (_.length > 40) {
+                            _ = _.substring(0, 40) + "<br>" + _.substring(40);
+                        }
                         var msg = "<p><b>" + _ + "</b></p>";
                         ui.tooltip.find(".ui-tooltip-content").html(msg + "please wait...");
 
