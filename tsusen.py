@@ -5,6 +5,7 @@ Copyright (c) 2015 Miroslav Stampar (@stamparm)
 See the file 'LICENSE' for copying permission
 """
 
+import socket
 import sys
 
 sys.dont_write_bytecode = True
@@ -19,7 +20,12 @@ def main():
     """
 
     init_sensor()
-    start_httpd()
+
+    try:
+        start_httpd()
+    except socket.error, ex:
+        exit("[x] can't start the HTTP server ('%s')" % ex)
+
     start_sensor()
 
 if __name__ == "__main__":
