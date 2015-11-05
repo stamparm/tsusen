@@ -1,4 +1,4 @@
-# tsusen [![Python 2.6|2.7](https://img.shields.io/badge/python-2.6|2.7-red.svg)](https://www.python.org/) [![Dependencies pcapy](https://img.shields.io/badge/dependencies-requirements.txt-yellow.svg)](requirements.txt) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/stamparm/maltrail#license-mit)
+# tsusen [![Python 2.6|2.7](https://img.shields.io/badge/python-2.6|2.7-blue.svg)](https://www.python.org/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/stamparm/maltrail#license-mit)
 
 ![Logo](http://i.imgur.com/hH1cr49.png)
 
