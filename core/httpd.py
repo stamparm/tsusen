@@ -46,9 +46,7 @@ class ThreadingServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
     def finish_request(self, *args, **kwargs):
         try:
             BaseHTTPServer.HTTPServer.finish_request(self, *args, **kwargs)
-        except KeyboardInterrupt:
-            raise
-        except:
+        except Exception:
             if DEBUG:
                 traceback.print_exc()
 
@@ -250,9 +248,7 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             try:
                 port = int(row['dst_port'])
                 port_name = MISC_PORTS.get(port) or socket.getservbyport(port, row['proto'].lower())
-            except KeyboardInterrupt:
-                raise
-            except:
+            except Exception:
                 port_name = None
             finally:
                 result += "["
@@ -292,9 +288,7 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                     try:
                         port = int(row['dst_port'])
                         port_name = MISC_PORTS.get(port) or socket.getservbyport(port, row['proto'].lower())
-                    except KeyboardInterrupt:
-                        raise
-                    except:
+                    except Exception:
                         port_name = None
                     finally:
                         serie = "%s%s%s" % (row['proto'].upper(), " %s" % row['dst_port'] if row['dst_port'].isdigit() else "", " (%s)" % port_name if port_name else "")
@@ -350,9 +344,7 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def finish(self):
         try:
             BaseHTTPServer.BaseHTTPRequestHandler.finish(self)
-        except KeyboardInterrupt:
-            raise
-        except:
+        except Exception:
             if DEBUG:
                 traceback.print_exc()
 

@@ -168,11 +168,8 @@ def _process_packet(packet, sec, usec):
                     _auxiliary[stat_key][1] = sec
                     _auxiliary[stat_key][2] += 1
 
-    except KeyboardInterrupt:
-        raise
-
-    except Exception, ex:
-        print ex
+    except Exception:
+        pass
 
     finally:
         _log_write()
