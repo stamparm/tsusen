@@ -241,7 +241,7 @@ $(document).ready(function() {
                             _ = "-";
                         }
                         var msg = "<p><b>" + _ + "</b></p>";
-                        ui.tooltip.find(".ui-tooltip-content").html(msg + "<br>" + "please wait...");
+                        ui.tooltip.find(".ui-tooltip-content").html(msg + "please wait...");
 
                         $.ajax("https://stat.ripe.net/data/whois/data.json?resource=" + ip, { dataType:"jsonp", ip: ip, msg: msg })
                         .success(function(json) {
@@ -264,7 +264,7 @@ $(document).ready(function() {
                                 msg = msg.replace(/(\-\+)+/g, "--").replace(/(\-\+)+/g, "--");
                             }
 
-                            ui.tooltip.find(".ui-tooltip-content").html(this.msg + "<br>" + msg);
+                            ui.tooltip.find(".ui-tooltip-content").html(this.msg + msg);
                         });
                     });
                 }
