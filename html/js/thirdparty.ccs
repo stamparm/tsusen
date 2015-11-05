@@ -1,0 +1,11 @@
+// ==ClosureCompiler==
+// @compilation_level WHITESPACE_ONLY
+// @output_file_name thirdparty.min.js
+// @language ECMASCRIPT5
+// @code_url https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js
+// @code_url https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js
+// @code_url https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.9/js/jquery.dataTables.min.js
+// @code_url https://raw.githubusercontent.com/garycourt/murmurhash-js/master/murmurhash3_gc.js
+// ==/ClosureCompiler==
+
+// http://closure-compiler.appspot.com/home
