@@ -143,7 +143,7 @@ function drawTrendlines() {
     }
 
     if (data.getNumberOfRows() > 0) {
-        document.title += " (" + formatDate(data.getValue(0, 0)) + " - " + formatDate(data.getValue(data.getNumberOfRows() - 1,0)) + ")";
+        document.title = "tsusen (" + formatDate(data.getValue(0, 0)) + " - " + formatDate(data.getValue(data.getNumberOfRows() - 1,0)) + ")";
     }
 
 
