@@ -297,7 +297,7 @@ $(document).ready(function() {
                                 IP_COUNTRY[this.ip] = "unknown";
                                 img = '<img src="images/blank.gif" class="flag flag-unknown" title="UNKNOWN"/>';
                             }
-                            
+
                             this.cell.html("").append(span_ip).append($(img).tooltip());
                         });
                     }

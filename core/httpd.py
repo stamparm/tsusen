@@ -34,6 +34,7 @@ from settings import MAX_IP_FILTER_RANGE
 from settings import MISC_PORTS
 from settings import SERVER_HEADER
 from settings import TIME_FORMAT
+from settings import VERSION
 
 class ThreadingServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
     def finish_request(self, *args, **kwargs):
@@ -194,6 +195,9 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def _url(self):
         return self.url
+
+    def _version(self):
+        return VERSION
 
     def _dataset(self):
         result = "\n"
