@@ -61,6 +61,21 @@ jQuery.extend(jQuery.fn.dataTableExt.oSort, {
     }
 });
 
+function pad(n, width, z) {
+    z = z || '0';
+    n = n + '';
+
+    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+}
+
+String.prototype.hashCode = function() {
+    return murmurhash3_32_gc(this, 13);
+};
+
+function getHashColor(value) {
+    return pad(value.hashCode().toString(16), 6).substring(0, 6);
+}
+
 // Reference: http://en.wikipedia.org/wiki/Private_network
 function isLocalAddress(ip) {
     if (ip.startsWith("10.") || ip.startsWith("192.168.") || ip.startsWith("127."))
@@ -97,15 +112,15 @@ function _ipSortingValue(a) {
 }
 
 google.load("visualization", "1", {packages:["corechart"]});
-google.setOnLoadCallback(drawChart);
 
-function drawChart() {
+function drawTrendlines() {
     var data = google.visualization.arrayToDataTable([
 //<!TRENDLINE_DATA!>
 ]);
 
     var options = {
         title: '',
+        colors: [],
         hAxis: {title: 'Date', format: 'yyyy-MM-dd', textStyle: {fontSize: 12}, titleTextStyle: {italic: false, fontSize: 13}},
         vAxis: {title: 'Intruders', textStyle: {fontSize: 12}, titleTextStyle: {italic: false, fontSize: 13}, logScale: true, minValue: 0},
         trendlines: { },
@@ -114,8 +129,12 @@ function drawChart() {
         chartArea: {left: 70, top: 20, width: "80%", height: "80%"},
     };
 
-    for (var i = 0; i < data.getNumberOfColumns() - 1; i++)
-        options.trendlines[i] = {type: 'polynomial', degree: 3, opacity: 1, lineWidth: 1, tooltip: false};
+    for (var i = 1; i < data.getNumberOfColumns(); i++) {
+        var color = getHashColor(data.getColumnLabel(i));
+        options.trendlines[i - 1] = {type: 'polynomial', degree: 3, opacity: 1, lineWidth: 1, tooltip: false, color: color};
+        options.colors.push(color);
+    }
+    //debugger;
 
     var chart = new google.visualization.ScatterChart(document.getElementById('chart'));
 
@@ -131,7 +150,7 @@ function drawChart() {
     });
 
     $(window).on('resized', function() {
-        drawChart(chart.draw(data, options));
+        drawTrendlines(chart.draw(data, options));
     });
 
     google.visualization.events.addListener(chart, 'onmouseover', function(e){
@@ -164,6 +183,8 @@ var dataset = [
 ];
  
 $(document).ready(function() {
+    drawTrendlines();
+
     $('#details').DataTable( {
         data: dataset,
         columns: [
@@ -226,11 +247,6 @@ $(document).ready(function() {
                         .success(function(json) {
                             var _ = json.data.reverse_nodes[this.ip];
                             if ((_.length === 0)||(_ === "localhost")) {
-                                /*var parts = this.ip.split('.');
-                                _ = "";
-                                for (var i = parts.length - 1; i >= 0; i--)
-                                    _ += parts[i] + ".";
-                                _ += "in-addr.arpa";*/
                                 _ = "-";
                             }
                             var msg = "<p><b>" + _ + "</b></p>" + this.msg;

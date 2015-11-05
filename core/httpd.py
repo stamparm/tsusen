@@ -23,6 +23,7 @@ import urlparse
 
 from common import addr_to_int
 from common import make_mask
+from sensor import _log_write
 from settings import config
 from settings import DEFAULT_LOG_PERMISSIONS
 from settings import DISABLED_CONTENT_EXTENSIONS
@@ -64,6 +65,9 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
         if path == '/':
             path = "index.html"
+
+        if path == "index.html":
+            _log_write(True)
 
         path = path.strip('/')
 
