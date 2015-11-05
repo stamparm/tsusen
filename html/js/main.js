@@ -6,6 +6,9 @@ var LINE_WIDTH = 1.5;
 var DEFAULT_OPACITY = 0.7;
 var TRENDLINE_TIMEOUT = null;
 var RESIZE_TIMEOUT = null;
+var REFRESH_PAGE_PERIOD = 5 * 60 * 1000;  // 5 mins
+
+window.setTimeout(function(){ document.location.reload(true); }, REFRESH_PAGE_PERIOD);
 
 jQuery.extend(jQuery.fn.dataTableExt.oSort, {
     // Reference: http://cdn.datatables.net/plug-ins/3cfcc339e89/sorting/date-euro.js
@@ -60,6 +63,10 @@ jQuery.extend(jQuery.fn.dataTableExt.oSort, {
         return b - a;
     }
 });
+
+function formatDate(value) {
+    return value.getFullYear() + "-" + pad(value.getMonth() + 1, 2) + "-" + pad(value.getDate(), 2);
+};
 
 function pad(n, width, z) {
     z = z || '0';
@@ -134,7 +141,11 @@ function drawTrendlines() {
         options.trendlines[i - 1] = {type: 'polynomial', degree: 3, opacity: 1, lineWidth: 1, tooltip: false, color: color};
         options.colors.push(color);
     }
-    //debugger;
+
+    if (data.getNumberOfRows() > 0) {
+        document.title += " (" + formatDate(data.getValue(0, 0)) + " - " + formatDate(data.getValue(data.getNumberOfRows() - 1,0)) + ")";
+    }
+
 
     var chart = new google.visualization.ScatterChart(document.getElementById('chart'));
 
