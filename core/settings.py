@@ -32,7 +32,7 @@ CSV_HEADER = "proto dst_port dst_ip src_ip first_seen last_seen count"
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 HTML_DIR = os.path.join(ROOT_DIR, "html")
 CONFIG_FILE = os.path.join(ROOT_DIR, "tsusen.conf")
-DISABLED_CONTENT_EXTENSIONS = (".py", ".pyc", ".md", ".txt", ".bak", ".conf", ".zip", "~")
+DISABLED_CONTENT_EXTENSIONS = (".py", ".pyc", ".md", ".bak", ".conf", ".zip", "~")
 SERVER_HEADER = "%s/%s" % (NAME, VERSION)
 MAX_IP_FILTER_RANGE = 2 ** 16
 
