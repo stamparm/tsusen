@@ -1,1 +1,3 @@
 pcapy
+python-geoip
+python-geoip-geolite2

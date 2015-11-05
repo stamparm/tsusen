@@ -295,12 +295,13 @@ $(document).ready(function() {
                 if (!isLocalAddress(ip)) {
                     if (!(ip in IP_COUNTRY)) {
                         IP_COUNTRY[ip] = null;
-                        $.ajax("https://stat.ripe.net/data/geoloc/data.json?resource=" + ip, { dataType:"jsonp", ip: ip, cell: cell })
+                        //$.ajax("https://stat.ripe.net/data/geoloc/data.json?resource=" + ip, { dataType:"jsonp", ip: ip, cell: cell })
+                        $.ajax("/geoip.json?ip=" + ip, { dataType:"jsonp", ip: ip, cell: cell })
                         .success(function(json) {
                             var span_ip = $("<span title=''/>").html(this.ip + " ");
 
-                            if ((json.data.locations.length > 0) && (json.data.locations[0].country !== "ANO")) {
-                                IP_COUNTRY[this.ip] = json.data.locations[0].country.toLowerCase().split('-')[0];
+                            if ((json.country) && (json.country !== "ANO")) {
+                                IP_COUNTRY[this.ip] = json.country.toLowerCase().split('-')[0];
                                 img = '<img src="images/blank.gif" class="flag flag-' + IP_COUNTRY[this.ip] + '" title="' + IP_COUNTRY[this.ip].toUpperCase() + '" />';  // title="' + IP_COUNTRY[this.ip].toUpperCase() + '" 
                                 span_ip.tooltip(options);
                             }
@@ -332,7 +333,7 @@ $(document).ready(function() {
                                 cell.html("").append(span_ip).append($(img).tooltip());
                                 clearInterval(interval);
                             }
-                        }, 1000, ip, cell);
+                        }, 200, ip, cell);
                     }
                 }
                 else {

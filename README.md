@@ -1,4 +1,4 @@
-# tsusen [![Python 2.6|2.7](https://img.shields.io/badge/python-2.6|2.7-blue.svg)](https://www.python.org/) [![Dependencies pcapy](https://img.shields.io/badge/dependencies-pcapy-yellow.svg)](https://github.com/CoreSecurity/pcapy) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/stamparm/maltrail#license-mit)
+# tsusen [![Python 2.6|2.7](https://img.shields.io/badge/python-2.6|2.7-red.svg)](https://www.python.org/) [![Dependencies pcapy](https://img.shields.io/badge/dependencies-requirements.txt-yellow.svg)](requirements.txt) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/stamparm/maltrail#license-mit)
 
 ![Logo](http://i.imgur.com/hH1cr49.png)
 
@@ -9,6 +9,7 @@ The following set of commands should get your tsusen sensor up and running (out 
 
 ```
 sudo apt-get install python-pcapy
+sudo pip install python-geoip python-geoip-geolite2
 cd /tmp/
 git clone https://github.com/stamparm/tsusen.git
 cd tsusen/
@@ -47,3 +48,4 @@ where `proto` (e.g. in first entry this is `TCP`) represents the protocol that h
 Results can be accessed through the HTTP reporting interface (Note: default port is `8339`):
 
 ![Reporting](http://i.imgur.com/EOAAWb2.png)
+

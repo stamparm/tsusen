@@ -10,6 +10,7 @@ import csv
 import cStringIO
 import datetime
 import httplib
+import json
 import mimetypes
 import glob
 import gzip
@@ -35,6 +36,11 @@ from settings import MISC_PORTS
 from settings import SERVER_HEADER
 from settings import TIME_FORMAT
 from settings import VERSION
+
+try:
+    from geoip import geolite2
+except ImportError:
+    exit("[!] please install python-geoip and python-geoip-geolite2 (e.g. 'pip install python-geoip python-geoip-geolite2')")
 
 class ThreadingServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
     def finish_request(self, *args, **kwargs):
@@ -192,6 +198,13 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                         filters.add(addr_to_int(_))
 
         return filters
+
+    def _geoip(self):
+        match = geolite2.lookup(self.params["ip"])
+        retval = json.dumps({"country": match.country if match else ""})
+        if "callback" in self.params:
+            retval = "%s(%s)" % (self.params["callback"], retval)
+        return retval
 
     def _url(self):
         return self.url
