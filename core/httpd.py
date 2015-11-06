@@ -79,6 +79,9 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         path = path.replace('/', os.path.sep)
         path = os.path.abspath(os.path.join(HTML_DIR, path)).strip()
 
+        if not os.path.isfile(path) and os.path.isfile("%s.html" % path):
+            path = "%s.html" % path
+
         if ".." not in os.path.relpath(path, HTML_DIR) and os.path.isfile(path) and not path.endswith(DISABLED_CONTENT_EXTENSIONS):
             content = open(path, "rb").read()
             self.send_response(httplib.OK)
