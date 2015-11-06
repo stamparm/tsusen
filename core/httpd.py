@@ -32,6 +32,7 @@ from settings import DEBUG
 from settings import HTML_DIR
 from settings import LOG_DIRECTORY
 from settings import MAX_IP_FILTER_RANGE
+from settings import MAX_PUT_SIZE
 from settings import MISC_PORTS
 from settings import SERVER_HEADER
 from settings import TIME_FORMAT
@@ -138,38 +139,43 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
         filename = os.path.join(LOG_DIRECTORY, path)
         length = int(self.headers.getheader('Content-length'))
-        content = self.rfile.read(length)
 
-        if not os.path.exists(filename):
-            with open(filename, "w+b") as f:
-                f.write(content)
-            os.chmod(filename, DEFAULT_LOG_PERMISSIONS)
-        else:
-            first = None
-            result = set()
+        if length <= MAX_PUT_SIZE:
+            content = self.rfile.read(length)
 
-            with open(filename, "r") as f:
-                for line in f.xreadlines():
+            if not os.path.exists(filename):
+                with open(filename, "w+b") as f:
+                    f.write(content)
+                os.chmod(filename, DEFAULT_LOG_PERMISSIONS)
+            else:
+                first = None
+                result = set()
+
+                with open(filename, "r") as f:
+                    for line in f.xreadlines():
+                        line = line.strip()
+                        if not line:
+                            continue
+                        if not first:
+                            first = line
+                            continue
+                        result.add(line)
+
+                for line in content.split("\n")[1:]:
                     line = line.strip()
                     if not line:
                         continue
-                    if not first:
-                        first = line
-                        continue
                     result.add(line)
 
-            for line in content.split("\n")[1:]:
-                line = line.strip()
-                if not line:
-                    continue
-                result.add(line)
+                with open(filename, "w+b") as f:
+                    f.write("%s\n" % first)
+                    for line in result:
+                        f.write("%s\n" % line)
 
-            with open(filename, "w+b") as f:
-                f.write("%s\n" % first)
-                for line in result:
-                    f.write("%s\n" % line)
+            self.send_response(httplib.OK)
+        else:
+            self.send_response(httplib.BAD_REQUEST)
 
-        self.send_response(httplib.OK)
         self.send_header("Connection", "close")
 
     def _get_filters(self):

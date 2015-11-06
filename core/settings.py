@@ -35,6 +35,7 @@ CONFIG_FILE = os.path.join(ROOT_DIR, "tsusen.conf")
 DISABLED_CONTENT_EXTENSIONS = (".py", ".pyc", ".md", ".bak", ".conf", ".zip", "~")
 SERVER_HEADER = "%s/%s" % (NAME, VERSION)
 MAX_IP_FILTER_RANGE = 2 ** 16
+MAX_PUT_SIZE = 5 * 1024 * 1024
 
 # Reference: https://sixohthree.com/media/2003/06/26/lock_your_doors/portscan.txt
 MISC_PORTS = { 17: "qotd", 53: "dns", 135: "dcom-rpc", 502: "modbus", 623: "ipmi", 1433: "mssql", 1723: "pptp", 1900: "upnp", 3128: "squid", 3389: "rdesktop", 5351: "nat-pmp", 5357: "wsdapi", 5631: "pc-anywhere", 5800: "vnc", 5900: "vnc", 5901: "vnc-1", 5902: "vnc-2", 5903: "vnc-3", 6379: "redis", 7547: "cwmp", 8118: "privoxy", 8338: "maltrail", 8339: "tsusen", 8443: "https-alt", 9200: "wap-wsp", 11211: "memcached", 17185: "vxworks", 27017: "mongo", 53413: "netis" }
