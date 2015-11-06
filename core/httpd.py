@@ -94,13 +94,13 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.send_response(httplib.NOT_FOUND)
             self.send_header("Connection", "close")
 
-        for match in re.finditer(r"<\!(\w+)\!>", content):
-            name = match.group(1)
-            _ = getattr(self, "_%s" % name.lower(), None)
-            if _:
-                content = self._format(content, **{ name: _() })
-
         if content is not None:
+            for match in re.finditer(r"<\!(\w+)\!>", content):
+                name = match.group(1)
+                _ = getattr(self, "_%s" % name.lower(), None)
+                if _:
+                    content = self._format(content, **{ name: _() })
+
             length = len(content)
 
             if "gzip" in self.headers.getheader("Accept-Encoding", ""):
