@@ -13,10 +13,10 @@ import subprocess
 
 from core.attribdict import AttribDict
 
-config = None
+config = AttribDict()
 
 NAME = "tsusen"
-VERSION = "0.2"
+VERSION = "0.3"
 DEBUG = False
 SNAP_LEN = 100
 IPPROTO = 8
@@ -39,58 +39,55 @@ MAX_IP_FILTER_RANGE = 2 ** 16
 # Reference: https://sixohthree.com/media/2003/06/26/lock_your_doors/portscan.txt
 MISC_PORTS = { 17: "qotd", 53: "dns", 135: "dcom-rpc", 502: "modbus", 623: "ipmi", 1433: "mssql", 1723: "pptp", 1900: "upnp", 3128: "squid", 3389: "rdesktop", 5351: "nat-pmp", 5357: "wsdapi", 5631: "pc-anywhere", 5800: "vnc", 5900: "vnc", 5901: "vnc-1", 5902: "vnc-2", 5903: "vnc-3", 6379: "redis", 7547: "cwmp", 8118: "privoxy", 8338: "maltrail", 8339: "tsusen", 8443: "https-alt", 9200: "wap-wsp", 11211: "memcached", 17185: "vxworks", 27017: "mongo", 53413: "netis" }
 
-def _read_config():
+def read_config(config_file):
     global config
 
-    if not os.path.isfile(CONFIG_FILE):
-        exit("[!] missing configuration file '%s'" % CONFIG_FILE)
-    elif not config:
-        config = AttribDict()
+    if not os.path.isfile(config_file):
+        exit("[!] missing configuration file '%s'" % config_file)
 
-        try:
-            array = None
-            content = open(CONFIG_FILE, "rb").read()
+    config.clear()
 
-            for line in content.split("\n"):
-                line = re.sub(r"#.+", "", line)
-                if not line.strip():
-                    continue
+    try:
+        array = None
+        content = open(config_file, "rb").read()
 
-                if line.count(' ') == 0:
-                    array = line.upper()
-                    config[array] = []
-                    continue
+        for line in content.split("\n"):
+            line = re.sub(r"#.+", "", line)
+            if not line.strip():
+                continue
 
-                if array and line.startswith(' '):
-                    config[array].append(line.strip())
-                    continue
-                else:
-                    array = None
-                    name, value = line = line.strip().split(' ', 1)
-                    name = name.upper()
-                    value = value.strip("'\"")
+            if line.count(' ') == 0:
+                array = line.upper()
+                config[array] = []
+                continue
 
-                if name.startswith("USE_"):
-                    value = value.lower() in ("1", "true")
-                elif value.isdigit():
-                    value = int(value)
-                else:
-                    for match in re.finditer(r"\$([A-Z0-9_]+)", value):
-                        if match.group(1) in globals():
-                            value = value.replace(match.group(0), globals()[match.group(1)])
-                        else:
-                            value = value.replace(match.group(0), os.environ.get(match.group(1), match.group(0)))
-                    if subprocess.mswindows and "://" not in value:
-                        value = value.replace("/", "\\")
+            if array and line.startswith(' '):
+                config[array].append(line.strip())
+                continue
+            else:
+                array = None
+                name, value = line = line.strip().split(' ', 1)
+                name = name.upper()
+                value = value.strip("'\"")
 
-                config[name] = value
+            if name.startswith("USE_"):
+                value = value.lower() in ("1", "true")
+            elif value.isdigit():
+                value = int(value)
+            else:
+                for match in re.finditer(r"\$([A-Z0-9_]+)", value):
+                    if match.group(1) in globals():
+                        value = value.replace(match.group(0), globals()[match.group(1)])
+                    else:
+                        value = value.replace(match.group(0), os.environ.get(match.group(1), match.group(0)))
+                if subprocess.mswindows and "://" not in value:
+                    value = value.replace("/", "\\")
 
-        except (IOError, OSError):
-            pass
+            config[name] = value
 
-        for option in ("MONITOR_INTERFACE",):
-            if not option in config:
-                exit("[!] missing mandatory option '%s' in configuration file '%s'" % (option, CONFIG_FILE))
+    except (IOError, OSError):
+        pass
 
-if __name__ != "__main__" and config is None:
-    _read_config()
+    for option in ("MONITOR_INTERFACE",):
+        if not option in config:
+            exit("[!] missing mandatory option '%s' in configuration file '%s'" % (option, config_file))

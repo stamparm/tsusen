@@ -5,6 +5,8 @@ Copyright (c) 2015 Miroslav Stampar (@stamparm)
 See the file 'LICENSE' for copying permission
 """
 
+import os
+import subprocess
 
 def addr_to_int(value):
     _ = value.split('.')
@@ -15,3 +17,15 @@ def int_to_addr(value):
 
 def make_mask(bits):
     return 0xffffffff ^ (1 << 32 - bits) - 1
+
+def check_sudo():
+    retval = None
+
+    if not subprocess.mswindows:
+        if getattr(os, "geteuid"):
+            retval = os.geteuid() == 0
+    else:
+        import ctypes
+        retval = ctypes.windll.shell32.IsUserAnAdmin()
+
+    return retval
