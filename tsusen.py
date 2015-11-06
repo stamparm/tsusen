@@ -6,6 +6,7 @@ See the file 'LICENSE' for copying permission
 """
 
 import optparse
+import os
 import socket
 import sys
 
@@ -27,14 +28,14 @@ def main():
 
     print "%s #v%s\n" % (NAME, VERSION)
 
+    parser = optparse.OptionParser(version=VERSION)
+    parser.add_option("-c", dest="config_file", default=CONFIG_FILE, help="Configuration file (default: '%s')" % os.path.split(CONFIG_FILE)[-1])
+    options, _ = parser.parse_args()
+
     if not check_sudo():
         exit("[x] please run with sudo/Administrator privileges")
 
-    parser = optparse.OptionParser(version=VERSION)
-    parser.add_option("-c", dest="config_file", help="Configuration file (default: tsusen.conf)")
-    options, _ = parser.parse_args()
-
-    read_config(options.config_file or CONFIG_FILE)
+    read_config(options.config_file)
     init_sensor()
 
     try:
