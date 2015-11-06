@@ -6,7 +6,7 @@ var LINE_WIDTH = 1.5;
 var DEFAULT_OPACITY = 0.7;
 var TRENDLINE_TIMEOUT = null;
 var RESIZE_TIMEOUT = null;
-var REFRESH_PAGE_PERIOD = 5 * 60 * 1000;  // 5 mins
+var REFRESH_PAGE_PERIOD = 30 * 60 * 1000;  // 30 mins
 
 window.setTimeout(function(){ document.location.reload(true); }, REFRESH_PAGE_PERIOD);
 
