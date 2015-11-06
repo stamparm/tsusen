@@ -138,7 +138,7 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             return
 
         filename = os.path.join(LOG_DIRECTORY, path)
-        length = int(self.headers.getheader('Content-length'))
+        length = int(self.headers.getheader("Content-length"))
 
         if length <= MAX_PUT_SIZE:
             content = self.rfile.read(length)

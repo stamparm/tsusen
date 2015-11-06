@@ -191,7 +191,7 @@ def init_sensor():
         try:
             items = re.findall(regex, subprocess.check_output(cmd))
             break
-        except:
+        except OSError:
             pass
 
     for ip, mask in items:
@@ -250,6 +250,8 @@ def init_sensor():
 def start_sensor():
     try:
         _cap.loop(-1, packet_handler)
+    except KeyboardInterrupt:
+        print "\r[x] Ctrl-C pressed"
     except:
         print "\r[x] stopped"
     finally:
