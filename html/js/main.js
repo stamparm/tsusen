@@ -129,7 +129,7 @@ function drawTrendlines() {
         title: '',
         colors: [],
         hAxis: {title: 'Date', format: 'yyyy-MM-dd', textStyle: {fontSize: 12}, titleTextStyle: {italic: false, fontSize: 13}},
-        vAxis: {title: 'Intruders', textStyle: {fontSize: 12}, titleTextStyle: {italic: false, fontSize: 13}, logScale: true, minValue: 0},
+        vAxis: {title: 'Intruders', textStyle: {fontSize: 12}, titleTextStyle: {italic: false, fontSize: 13}, logScale: true},
         trendlines: { },
         legend: {position: 'right', textStyle: {fontSize: 13}},
         fontName: 'monospace',
@@ -138,7 +138,7 @@ function drawTrendlines() {
 
     for (var i = 1; i < data.getNumberOfColumns(); i++) {
         var color = getHashColor(data.getColumnLabel(i));
-        options.trendlines[i - 1] = {type: 'polynomial', degree: 3, opacity: 1, lineWidth: 1, tooltip: false, color: color};
+        options.trendlines[i - 1] = {type: 'linear', opacity: 1, lineWidth: 1, tooltip: false, color: color};
         options.colors.push(color);
     }
 
