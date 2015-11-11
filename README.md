@@ -49,3 +49,7 @@ Results can be accessed through the HTTP reporting interface (Note: default port
 
 ![Reporting](http://i.imgur.com/EOAAWb2.png)
 
+
+## License
+
+This software is provided under under a MIT License. See the accompanying [LICENSE](https://github.com/stamparm/tsusen/blob/master/LICENSE) file for more information.
