@@ -1,6 +1,6 @@
 body { font: 11px monospace }
 td, th { padding: 2px 4px }
-#chart { height: 600px; border: 1px solid #a8a8a8 }
+#chart { height: 600px; margin: 10px; border: 1px solid #a8a8a8 }
 #details { border-collapse: collapse }
 #details tr { background-color: #fff; border-color: #a8a8a8 }
 #details td { white-space: nowrap; border-color: #a8a8a8 }
@@ -23,7 +23,7 @@ td, th { padding: 2px 4px }
     background: url("../images/thirdparty/flags.png") no-repeat;
     display: inline-block;
     /*margin-bottom: 2px;*/
-    overflow: hidden; 
+    overflow: hidden;
 }
 .flag.flag-unknown {
     background: url("../images/thirdparty/unknown.png") no-repeat;

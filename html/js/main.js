@@ -138,6 +138,7 @@ function drawTrendlines() {
 
     for (var i = 1; i < data.getNumberOfColumns(); i++) {
         var color = getHashColor(data.getColumnLabel(i));
+        //options.trendlines[i - 1] = {type: 'polynomial', degree: 5, opacity: 1, lineWidth: 1, tooltip: false, color: color};
         options.trendlines[i - 1] = {type: 'linear', opacity: 1, lineWidth: 1, tooltip: false, color: color};
         options.colors.push(color);
     }
