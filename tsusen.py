@@ -40,10 +40,15 @@ def main():
 
     try:
         start_httpd()
+        start_sensor()
     except socket.error, ex:
         exit("[x] can't start the HTTP server ('%s')" % ex)
-
-    start_sensor()
+    except KeyboardInterrupt:
+        print "\r[x] stopping (Ctrl-C pressed)"
+    except:
+        pass
+    finally:
+        os._exit(0)
 
 if __name__ == "__main__":
     main()

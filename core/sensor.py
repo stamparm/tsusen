@@ -250,9 +250,5 @@ def init_sensor():
 def start_sensor():
     try:
         _cap.loop(-1, packet_handler)
-    except KeyboardInterrupt:
-        print "\r[x] Ctrl-C pressed"
-    except:
-        print "\r[x] stopped"
     finally:
         _log_write(True)
