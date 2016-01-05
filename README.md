@@ -1,11 +1,11 @@
-# tsusen [![Python 2.6|2.7](https://img.shields.io/badge/python-2.6|2.7-blue.svg)](https://www.python.org/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/stamparm/tsusen#license)
+# Tsusen [![Python 2.6|2.7](https://img.shields.io/badge/python-2.6|2.7-blue.svg)](https://www.python.org/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/stamparm/tsusen#license)
 
 ![Logo](http://i.imgur.com/hH1cr49.png)
 
-**tsusen** (&#27941;&#27874;&#12475;&#12531;&#12469;&#12540;) is a standalone network sensor made for gathering information from the regular traffic coming from the outside (i.e. Internet) on a daily basis (e.g. mass-scans, service-scanners, etc.). Any disturbances should be closely watched for as those can become a good prediction base of forthcoming events. For example, exploitation of a newly found web service vulnerability (e.g. [Heartbleed](http://heartbleed.com/)) should generate a visible "spike" of total number of "intruders" on affected network port.
+**Tsusen** (&#27941;&#27874;&#12475;&#12531;&#12469;&#12540;) is a standalone network sensor made for gathering information from the regular traffic coming from the outside (i.e. Internet) on a daily basis (e.g. mass-scans, service-scanners, etc.). Any disturbances should be closely watched for as those can become a good prediction base of forthcoming events. For example, exploitation of a newly found web service vulnerability (e.g. [Heartbleed](http://heartbleed.com/)) should generate a visible "spike" of total number of "intruders" on affected network port.
 
 
-The following set of commands should get your tsusen sensor up and running (out of the box with default settings and monitoring interface `any` and HTTP reporting interface on default port `8339`):
+The following set of commands should get your Tsusen sensor up and running (out of the box with default settings and monitoring interface `any` and HTTP reporting interface on default port `8339`):
 
 ```
 sudo apt-get install python-pcapy
