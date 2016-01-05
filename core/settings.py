@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2015 Miroslav Stampar (@stamparm)
+Copyright (c) 2015-2016 Miroslav Stampar (@stamparm)
 See the file 'LICENSE' for copying permission
 """
 
@@ -16,7 +16,7 @@ from core.attribdict import AttribDict
 config = AttribDict()
 
 NAME = "tsusen"
-VERSION = "0.3.2"
+VERSION = "0.3.3"
 DEBUG = False
 SNAP_LEN = 100
 IPPROTO = 8
