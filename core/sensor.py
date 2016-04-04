@@ -189,7 +189,7 @@ def init_sensor():
 
     for cmd, regex in (("ifconfig", r"inet addr:([\d.]+) .*Mask:([\d.]+)"), ("ipconfig", r"IPv4 Address[^\n]+([\d.]+)\s+Subnet Mask[^\n]+([\d.]+)")):
         try:
-            items = re.findall(regex, subprocess.check_output(cmd))
+            items = re.findall(regex, subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0])
             break
         except OSError:
             pass
