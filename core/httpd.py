@@ -102,11 +102,8 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 if _:
                     content = self._format(content, **{ name: _() })
 
-            length = len(content)
-
             if "gzip" in self.headers.getheader("Accept-Encoding", ""):
                 self.send_header("Content-Encoding", "gzip")
-                self.send_header("Transfer-Encoding", "chunked")
                 _ = cStringIO.StringIO()
                 compress = gzip.GzipFile("", "w+b", 9, _)
                 compress._stream = _
@@ -114,13 +111,16 @@ class ReqHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 compress.flush()
                 compress.close()
                 content = compress._stream.getvalue()
-            else:
-                self.send_header("Content-Length", str(length))
 
-            self.end_headers()
+            self.send_header("Content-Length", str(len(content)))
+
+        self.end_headers()
+
+        if content:
             self.wfile.write(content)
-            self.wfile.flush()
-            self.wfile.close()
+
+        self.wfile.flush()
+        self.wfile.close()
 
     def do_PUT(self):
         """

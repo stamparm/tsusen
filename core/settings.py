@@ -16,8 +16,8 @@ from core.attribdict import AttribDict
 config = AttribDict()
 
 NAME = "tsusen"
-VERSION = "0.3.4"
-DEBUG = False
+VERSION = "0.3.5"
+DEBUG = True
 SNAP_LEN = 100
 IPPROTO = 8
 ETH_LENGTH = 14
