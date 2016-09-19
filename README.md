@@ -1,6 +1,6 @@
 ![Logo](http://i.imgur.com/DPh91R1.png)
 
-# Tsusen [![Python 2.6|2.7](https://img.shields.io/badge/python-2.6|2.7-yellow.svg)](https://www.python.org/) [![License](https://img.shields.io/badge/license-MIT-red.svg)](https://github.com/stamparm/tsusen#license)
+# [![Python 2.6|2.7](https://img.shields.io/badge/python-2.6|2.7-yellow.svg)](https://www.python.org/) [![License](https://img.shields.io/badge/license-MIT-red.svg)](https://github.com/stamparm/tsusen#license)
 
 **Tsusen** (&#27941;&#27874;&#12475;&#12531;&#12469;&#12540;) is a standalone network sensor made for gathering information from the regular traffic coming from the outside (i.e. Internet) on a daily basis (e.g. mass-scans, service-scanners, etc.). Any disturbances should be closely watched for as those can become a good prediction base of forthcoming events. For example, exploitation of a newly found web service vulnerability (e.g. [Heartbleed](http://heartbleed.com/)) should generate a visible "spike" of total number of "intruders" on affected network port.
 
