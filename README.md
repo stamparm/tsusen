@@ -8,8 +8,7 @@
 The following set of commands should get your Tsusen sensor up and running (out of the box with default settings and monitoring interface `any` and HTTP reporting interface on default port `8339`):
 
 ```
-sudo apt-get install python-pcapy
-sudo pip install python-geoip python-geoip-geolite2
+sudo pip install pcapy-ng python-geoip python-geoip-geolite2
 cd /tmp/
 git clone https://github.com/stamparm/tsusen.git
 cd tsusen/
